@@ -2,6 +2,7 @@
 
 #include <optional>
 #include <vector>
+#include <string>
 
 namespace unv {
 struct UnitsSystem {

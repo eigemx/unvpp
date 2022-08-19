@@ -27,10 +27,4 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
-if (LINUX)
-	set(CMAKE_CXX_FLAGS "-Wall -Wextra")
-else()
-	set(CMAKE_CXX_FLAGS "-Wall")
-endif()
-
-set(CMAKE_CXX_FLAGS_RELEASE "-O2")
+set (CMAKE_CXX_FLAGS "-Wall -O2")

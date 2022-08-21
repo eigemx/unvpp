@@ -1,17 +1,14 @@
 #pragma once
 
 #include <optional>
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace unv {
 struct UnitsSystem {
     std::size_t code{0};
     double lengthScale{1.};
-    double forceScale{1.};
-    double temperatureScale{1.};
-    double temperatureOffset{273.};
-    std::string repr;
+    std::string repr{"Unknown"};
 };
 
 struct Vertex {

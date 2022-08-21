@@ -23,7 +23,7 @@ auto read(std::ifstream &stream) -> Mesh {
     mesh.groups = reader.groups().size() > 0
                       ? std::optional(std::move(reader.groups()))
                       : std::nullopt;
-    
+
     return mesh;
 }
 

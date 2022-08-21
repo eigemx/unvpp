@@ -39,21 +39,16 @@ void Reader::readTags() {
 
 void Reader::readUnits() {
     std::size_t unit_code = 0;
-    _stream.readLine(_tempLine);
-    try {
-        unit_code = _stream.readScalars(_tempLine, 1)[0];
-    }
 
-    catch (std::exception &e) {
-    }
+    _stream.readLine(_tempLine);
+    unit_code = _stream.readScalars(_tempLine, 1)[0];
 
     _stream.readLine(_tempLine);
     auto lengthScale = std::stod(_tempLine.substr(0, 25));
-    auto forceScale = std::stod(_tempLine.substr(25, 50));
-    auto tempScale = std::stod(_tempLine.substr(50, 75));
 
-    _stream.readLine(_tempLine);
-    auto tempOffset = std::stod(_tempLine.substr(0, 25));
+    // Unit tag also include force scale, temperature scale and temperature
+    // offset, but, since unvpp is mainly a mesh parser, data related to
+    // post-processing are ignored.
 
     std::string repr;
 
@@ -64,7 +59,9 @@ void Reader::readUnits() {
     skipTag();
 
     unitsSystem = UnitsSystem{
-        unit_code, lengthScale, forceScale, tempScale, tempOffset, repr,
+        unit_code,
+        lengthScale,
+        repr,
     };
 }
 

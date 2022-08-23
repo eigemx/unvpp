@@ -58,7 +58,7 @@ void Reader::readUnits() {
 
     skipTag();
 
-    unitsSystem = UnitsSystem{
+    _unitsSystem = UnitsSystem{
         unit_code,
         lengthScale,
         repr,
@@ -84,7 +84,6 @@ void Reader::readVertices() {
             std::stod(_tempLine.substr(0, 25)),
             std::stod(_tempLine.substr(25, 25)),
             std::stod(_tempLine.substr(50, 25)),
-
         });
         _vertex_id_map[point_unv_id] = current_point_id++;
     }
@@ -143,12 +142,11 @@ void Reader::readGroups() {
         auto group_name = split(_tempLine).at(0);
         trim(group_name);
 
-        auto group_elements = readGroupElements(n_elements);
+        auto [group_elements, group_type] = readGroupElements(n_elements);
 
-        // TODO: handle point group type
         _groups.push_back(Group{
             group_name,
-            GroupType::Cell,
+            group_type,
             std::move(group_elements),
         });
     }
@@ -186,57 +184,61 @@ void Reader::readDOFs() {
     }
 }
 
-UnitsSystem &Reader::units() { return unitsSystem; }
+UnitsSystem &Reader::units() { return _unitsSystem; }
 
 std::vector<Vertex> &Reader::vertices() { return _vertices; }
 std::vector<Element> &Reader::elements() { return _elements; }
 std::vector<Group> &Reader::groups() { return _groups; }
 
-std::vector<std::size_t> Reader::readGroupElements(std::size_t n_elements) {
+template <typename T> T Reader::readGroupElements(std::size_t n_elements) {
     if (n_elements == 1) {
-        auto element = readGroupElementsSingleColumn();
-        return std::vector<std::size_t>{element};
+        return readGroupElementsSingleColumn();
     }
 
     else if (n_elements % 2 == 0) {
         return readGroupElementsTwoColumns(n_elements);
-    } else {
-        auto elements = readGroupElementsTwoColumns(n_elements - 1);
-        elements.push_back(readGroupElementsSingleColumn());
-        return elements;
     }
 
-    // group has no elements
-    return std::vector<std::size_t>();
+    auto [elements, group_type] = readGroupElementsTwoColumns(n_elements - 1);
+    elements.push_back(readGroupElementsSingleColumn().first.at(0));
+
+    return std::make_pair(elements, group_type);
 }
 
-std::size_t Reader::readGroupElementsSingleColumn() {
-    if (!_stream.readLine(_tempLine)) {
-        throw std::runtime_error("Failed to read group element");
-    }
-    return _stream.readScalars(_tempLine, 1)[0];
-}
-
-std::vector<std::size_t>
-Reader::readGroupElementsTwoColumns(std::size_t n_elements) {
+template <typename T>
+T Reader::readGroupElementsTwoColumns(std::size_t n_elements) {
     auto n_rows = static_cast<std::size_t>(n_elements / 2.0);
     std::vector<size_t> elements;
     elements.resize(n_elements + 1);
 
     std::size_t current_element_number = 0;
 
+    std::vector<std::size_t> records;
     for (std::size_t i = 0; i < n_rows; ++i) {
         if (!_stream.readLine(_tempLine)) {
             throw std::runtime_error("Failed to read group element");
         }
 
-        auto records = _stream.readScalars(_tempLine, 6);
+        records = _stream.readScalars(_tempLine, 6);
         elements[current_element_number] = records[1];
         elements[current_element_number + 1] = records[5];
         current_element_number += 2;
     }
 
-    return elements;
+    auto group_type = records[0] == 8 ? GroupType::Cell : GroupType::Point;
+
+    return std::make_pair(std::move(elements), group_type);
 }
 
+template <typename T> T Reader::readGroupElementsSingleColumn() {
+    if (!_stream.readLine(_tempLine)) {
+        throw std::runtime_error("Failed to read group element");
+    }
+
+    auto records = _stream.readScalars(_tempLine, 2);
+    auto element = std::vector<std::size_t>({records[1]});
+    auto group_type = records[0] == 8 ? GroupType::Cell : GroupType::Point;
+
+    return std::make_pair(element, group_type);
+}
 } // namespace unv

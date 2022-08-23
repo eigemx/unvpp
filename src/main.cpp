@@ -27,6 +27,15 @@ int main(int argc, char *argv[]) {
               << mesh.unitsSystem.value_or(unv::UnitsSystem()).repr
               << std::endl;
     std::cout << "Vertices count = " << mesh.vertices.size() << std::endl;
+    std::cout << "Elements count = "
+              << mesh.elements.value_or(std::vector<unv::Element>()).size()
+              << std::endl;
+
+    for (auto &group : mesh.groups.value_or(std::vector<unv::Group>())) {
+        std::cout << "Group name: " << group.name
+                  << " - elements count = " << group.eIndices.size()
+                  << std::endl;
+    }
 
     std::cout << std::setprecision(20)
               << "Time of execution: " << duration.count() << " milliseconds"

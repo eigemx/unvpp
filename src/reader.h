@@ -2,9 +2,8 @@
 #include "common.h"
 #include "stream.h"
 #include <unordered_map>
+#include <utility>
 
-// TODO:
-// 1. Handle different line ending in windows and linux systems
 namespace unv {
 class Reader {
   public:
@@ -30,15 +29,19 @@ class Reader {
         }
     }
 
-    std::vector<std::size_t> readGroupElements(std::size_t n_elements);
-    std::size_t readGroupElementsSingleColumn();
-    std::vector<std::size_t>
-    readGroupElementsTwoColumns(std::size_t n_elements);
+    template <typename T = std::pair<std::vector<std::size_t>, GroupType>>
+    T readGroupElements(std::size_t n_elements);
+
+    template <typename T = std::pair<std::vector<std::size_t>, GroupType>>
+    T readGroupElementsTwoColumns(std::size_t n_elements);
+
+    template <typename T = std::pair<std::vector<std::size_t>, GroupType>>
+    T readGroupElementsSingleColumn();
 
     FileStream &_stream;
     std::string _tempLine;
 
-    UnitsSystem unitsSystem;
+    UnitsSystem _unitsSystem;
     std::vector<Vertex> _vertices;
     std::vector<Element> _elements;
     std::vector<Group> _groups;

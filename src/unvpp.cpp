@@ -6,7 +6,7 @@
 
 namespace unv {
 
-auto read(std::ifstream &stream) -> Mesh {
+Mesh read(std::ifstream &stream) {
     auto fileStream = FileStream(stream);
     auto reader = Reader(fileStream);
 

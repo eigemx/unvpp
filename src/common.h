@@ -44,7 +44,7 @@ enum class TagType {
     Elements,
     DOFs,
     Group,
-    Unsupported
+    Unsupported,
 };
 
 inline TagType tagTypeFromStr(const std::string &tag) {

@@ -28,8 +28,7 @@ enum class ElementType {
 };
 
 struct Element {
-    std::vector<std::size_t>
-        vIndices; // indices of vertices defining the elements
+    std::vector<std::size_t> vIndices; 
     ElementType type;
 };
 
@@ -41,8 +40,7 @@ enum class GroupType {
 struct Group {
     std::string name;
     GroupType type;
-    std::vector<std::size_t>
-        eIndices; // indices of elements defining the elements
+    std::vector<std::size_t> eIndices;
 };
 
 struct Mesh {
@@ -52,5 +50,5 @@ struct Mesh {
     std::optional<std::vector<Group>> groups;
 };
 
-auto read(std::ifstream &stream) -> Mesh;
+Mesh read(std::ifstream &stream);
 } // namespace unv

@@ -32,6 +32,7 @@ void Reader::readTags() {
             break;
 
         default:
+            // Unsupported tags are skipped.
             skipTag();
         }
     }

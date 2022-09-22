@@ -1,30 +1,26 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.10)
 
-project (unvpp VERSION 1.0.0 DESCRIPTION "Ideas-UNV Mesh Parsing Library")
+project (
+  unvpp VERSION 1.0.0 
+  DESCRIPTION "Ideas-UNV Mesh Parsing Library"
+  LANGUAGES CXX
+)
+
 set(CMAKE_CXX_STANDARD 17)
 
-include_directories(${CMAKE_HOME_DIRECTORY}/include)
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
 
-
-add_executable(unv-report
-    src/main.cpp
-    src/reader.cpp
-    src/stream.cpp
-    src/unvpp.cpp
-)
-
-add_library(unvpp SHARED
-    src/reader.cpp
-    src/stream.cpp
-    src/unvpp.cpp
-)
-
-set_target_properties(unvpp PROPERTIES VERSION ${PROJECT_VERSION})
-
-target_include_directories(unvpp PUBLIC ${CMAKE_HOME_DIRECTORY}/include)
-
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release)
+# check if unvpp is compiler as the main project
+set(UNVPP_MAIN_PROJECT OFF)
+if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    set(UNVPP_MAIN_PROJECT ON)
 endif()
 
-set (CMAKE_CXX_FLAGS "-Wall -O2")
+include_directories(${PROJECT_SOURCE_DIR}/include)
+
+add_subdirectory(src)
+
+if (${UNVPP_MAIN_PROJECT})
+    add_subdirectory(test)
+endif()

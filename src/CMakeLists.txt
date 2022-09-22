@@ -1,7 +1,7 @@
 add_library(unvpp
-    src/reader.cpp
-    src/stream.cpp
-    src/unvpp.cpp
+    reader.cpp
+    stream.cpp
+    unvpp.cpp
 )
 
 set_target_properties(unvpp PROPERTIES VERSION ${PROJECT_VERSION})

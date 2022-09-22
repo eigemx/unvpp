@@ -22,5 +22,5 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 add_subdirectory(src)
 
 if (${UNVPP_MAIN_PROJECT})
-    add_subdirectory(test)
+    add_subdirectory(utilities)
 endif()

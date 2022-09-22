@@ -17,8 +17,6 @@ if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     set(UNVPP_MAIN_PROJECT ON)
 endif()
 
-include_directories(${PROJECT_SOURCE_DIR}/include/)
-
 add_subdirectory(src)
 
 if (${UNVPP_MAIN_PROJECT})

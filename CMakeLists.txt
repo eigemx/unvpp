@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 project (
-  unvpp VERSION 1.0.0 
+  Unvpp VERSION 1.0.0 
   DESCRIPTION "Ideas-UNV Mesh Parsing Library"
   LANGUAGES CXX
 )

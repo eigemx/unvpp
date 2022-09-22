@@ -1,4 +1,4 @@
-add_library(unvpp SHARED
+add_library(unvpp
     src/reader.cpp
     src/stream.cpp
     src/unvpp.cpp

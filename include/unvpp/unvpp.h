@@ -18,7 +18,6 @@ struct Vertex {
 };
 
 enum class ElementType {
-    Point,
     Line,
     Triangle,
     Quad,

@@ -22,7 +22,6 @@ class FileStream {
 
   private:
     std::ifstream *file_stream;
-    // std::size_t lineNumber {0};
 };
 
 } // namespace unv

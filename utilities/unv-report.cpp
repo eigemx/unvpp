@@ -11,7 +11,8 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
-    std::ifstream stream(argv[1]);
+    std::ios::sync_with_stdio(false);
+    std::ifstream stream(argv[1], std::ios::binary);
 
     // measure time of execution
     auto start = std::chrono::high_resolution_clock::now();

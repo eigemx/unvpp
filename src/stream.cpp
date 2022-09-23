@@ -6,7 +6,6 @@ FileStream::FileStream(std::ifstream &fstream) { file_stream = &fstream; }
 bool FileStream::readLine(std::string &line) {
     if (file_stream->good()) {
         std::getline(*file_stream, line);
-        //++lineNumber;
         return true;
     }
     return false;

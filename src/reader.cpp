@@ -75,13 +75,15 @@ void Reader::readVertices() {
             break;
         }
 
-        point_unv_id = std::stoul(_tempLine.substr(0, 10));
+        point_unv_id = parseNumber<std::size_t>(_tempLine.substr(0, 10));
 
         if (!_stream.readLine(_tempLine)) {
             throw std::runtime_error("Failed to read point coordinates");
         }
 
         _vertices.push_back(Vertex{
+            // clang does not support from_chars floating point numbers conversion
+            // in future replace std::stod() to parseNumber()
             std::stod(_tempLine.substr(0, 25)),
             std::stod(_tempLine.substr(25, 25)),
             std::stod(_tempLine.substr(50, 25)),

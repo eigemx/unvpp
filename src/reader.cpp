@@ -75,7 +75,8 @@ void Reader::readVertices() {
             break;
         }
 
-        point_unv_id = parseNumber<std::size_t>(_tempLine.substr(0, 10));
+        point_unv_id = std::stoi(_tempLine.substr(0, 10));
+        //point_unv_id = parseNumber<std::size_t>(_tempLine.substr(0, 10));
 
         if (!_stream.readLine(_tempLine)) {
             throw std::runtime_error("Failed to read point coordinates");
@@ -135,7 +136,8 @@ void Reader::readGroups() {
         }
 
         auto tokens = split(_tempLine);
-        auto n_elements = parseNumber<std::size_t>(tokens.back());
+        auto n_elements = std::stoi(tokens.back());
+        //auto n_elements = parseNumber<std::size_t>(tokens.back());
 
         // get group name
         if (!_stream.readLine(_tempLine)) {

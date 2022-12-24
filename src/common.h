@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <array>
 
 #include <unvpp/unvpp.h>
 

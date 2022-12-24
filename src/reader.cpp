@@ -4,6 +4,42 @@
 #include <unordered_map>
 
 namespace unv {
+
+auto readFirstScalar(const std::string& line) -> std::size_t {
+    std::size_t scalar;
+    std::stringstream ss(line);
+
+    ss >> scalar;
+
+    return scalar;
+}
+
+auto readScalars(const std::string& line, std::size_t n) -> std::vector<std::size_t> {
+    std::vector<std::size_t> scalars;
+    std::size_t scalar;
+    scalars.reserve(n);
+    std::stringstream ss(line);
+
+    for (std::size_t i = 0; i < n; i++) {
+        ss >> scalar;
+        scalars.push_back(scalar);
+    }
+    return scalars;
+}
+
+auto readDoubles(const std::string& line, std::size_t n) -> std::vector<double> {
+    std::vector<double> doubles;
+    double d;
+    doubles.reserve(n);
+    std::stringstream ss(line);
+
+    for (std::size_t i = 0; i < n; i++) {
+        ss >> d;
+        doubles.push_back(d);
+    }
+    return doubles;
+}
+
 void Reader::readTags() {
     while (_stream.readLine(_tempLine)) {
         if (isSeparator(_tempLine)) {
@@ -42,7 +78,7 @@ void Reader::readUnits() {
     std::size_t unit_code = 0;
 
     _stream.readLine(_tempLine);
-    unit_code = _stream.readScalars(_tempLine, 1)[0];
+    unit_code = readScalars(_tempLine, 1)[0];
 
     _stream.readLine(_tempLine);
     auto lengthScale = std::stod(_tempLine.substr(0, 25));
@@ -59,7 +95,7 @@ void Reader::readUnits() {
 
     skipTag();
 
-    _unitsSystem = UnitsSystem{
+    _unitsSystem = UnitsSystem {
         unit_code,
         lengthScale,
         repr,
@@ -82,7 +118,7 @@ void Reader::readVertices() {
             throw std::runtime_error("Failed to read point coordinates");
         }
 
-        _vertices.push_back(Vertex{
+        _vertices.push_back(Vertex {
             // clang does not support from_chars floating point numbers conversion
             // in future replace std::stod() to parseNumber()
             std::stod(_tempLine.substr(0, 25)),
@@ -94,7 +130,9 @@ void Reader::readVertices() {
 }
 
 void Reader::readElements() {
-    std::size_t current_element_id{0}, element_unv_id{0}, vertex_count{0};
+    std::size_t current_element_id {0};
+    std::size_t element_unv_id {0};
+    std::size_t vertex_count {0};
     ElementType element_type;
 
     while (_stream.readLine(_tempLine)) {
@@ -102,7 +140,7 @@ void Reader::readElements() {
             break;
         }
 
-        auto records = _stream.readScalars(_tempLine, 6);
+        auto records = readScalars(_tempLine, 6);
         element_unv_id = records[0];
         element_type = elementType(records[1]);
         vertex_count = records[5];
@@ -113,14 +151,14 @@ void Reader::readElements() {
             _stream.readLine(_tempLine);
         }
 
-        auto vIndices = _stream.readScalars(_tempLine, vertex_count);
+        auto vIndices = readScalars(_tempLine, vertex_count);
 
         // map UNV vertex indices to ordered vertex indices
-        for (std::size_t &vIndex : vIndices) {
+        for (std::size_t& vIndex : vIndices) {
             vIndex = _vertex_id_map[vIndex];
         }
 
-        _elements.push_back(Element{
+        _elements.push_back(Element {
             std::move(vIndices),
             element_type,
         });
@@ -149,7 +187,7 @@ void Reader::readGroups() {
 
         auto [group_elements, group_type] = readGroupElements(n_elements);
 
-        _groups.push_back(Group{
+        _groups.push_back(Group {
             group_name,
             group_type,
             std::move(group_elements),
@@ -177,11 +215,10 @@ void Reader::readDOFs() {
             if (isSeparator(_tempLine)) {
                 break;
             }
-            group_vertices.push_back(
-                _vertex_id_map[_stream.readScalars(_tempLine, 1)[0]]);
+            group_vertices.push_back(_vertex_id_map[readScalars(_tempLine, 1)[0]]);
         }
 
-        _groups.push_back(Group{
+        _groups.push_back(Group {
             group_name,
             GroupType::Point,
             std::move(group_vertices),
@@ -189,18 +226,28 @@ void Reader::readDOFs() {
     }
 }
 
-UnitsSystem &Reader::units() { return _unitsSystem; }
+auto Reader::units() -> UnitsSystem& {
+    return _unitsSystem;
+}
 
-std::vector<Vertex> &Reader::vertices() { return _vertices; }
-std::vector<Element> &Reader::elements() { return _elements; }
-std::vector<Group> &Reader::groups() { return _groups; }
+auto Reader::vertices() -> std::vector<Vertex>& {
+    return _vertices;
+}
 
-template <typename T> T Reader::readGroupElements(std::size_t n_elements) {
+auto Reader::elements() -> std::vector<Element>& {
+    return _elements;
+}
+
+auto Reader::groups() -> std::vector<Group>& {
+    return _groups;
+}
+
+template <typename T> auto Reader::readGroupElements(std::size_t n_elements) -> T {
     if (n_elements == 1) {
         return readGroupElementsSingleColumn();
     }
 
-    else if (n_elements % 2 == 0) {
+    if (n_elements % 2 == 0) {
         return readGroupElementsTwoColumns(n_elements);
     }
 
@@ -210,8 +257,7 @@ template <typename T> T Reader::readGroupElements(std::size_t n_elements) {
     return std::make_pair(elements, group_type);
 }
 
-template <typename T>
-T Reader::readGroupElementsTwoColumns(std::size_t n_elements) {
+template <typename T> auto Reader::readGroupElementsTwoColumns(std::size_t n_elements) -> T {
     auto n_rows = static_cast<std::size_t>(n_elements / 2.0);
     std::vector<size_t> elements;
     elements.resize(n_elements + 1);
@@ -224,7 +270,7 @@ T Reader::readGroupElementsTwoColumns(std::size_t n_elements) {
             throw std::runtime_error("Failed to read group element");
         }
 
-        records = _stream.readScalars(_tempLine, 6);
+        records = readScalars(_tempLine, 6);
         elements[current_element_number] = records[1];
         elements[current_element_number + 1] = records[5];
         current_element_number += 2;
@@ -235,12 +281,12 @@ T Reader::readGroupElementsTwoColumns(std::size_t n_elements) {
     return std::make_pair(std::move(elements), group_type);
 }
 
-template <typename T> T Reader::readGroupElementsSingleColumn() {
+template <typename T> auto Reader::readGroupElementsSingleColumn() -> T {
     if (!_stream.readLine(_tempLine)) {
         throw std::runtime_error("Failed to read group element");
     }
 
-    auto records = _stream.readScalars(_tempLine, 2);
+    auto records = readScalars(_tempLine, 2);
     auto element = std::vector<std::size_t>({records[1]});
     auto group_type = records[0] == 8 ? GroupType::Cell : GroupType::Point;
 

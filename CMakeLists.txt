@@ -20,5 +20,6 @@ endif()
 add_subdirectory(src)
 
 if (${UNVPP_MAIN_PROJECT})
+    set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
     add_subdirectory(utilities)
 endif()

@@ -6,9 +6,9 @@
 
 namespace unv {
 struct UnitsSystem {
-    std::size_t code{0};
-    double lengthScale{1.};
-    std::string repr{"Unknown"};
+    std::size_t code {0};
+    double lengthScale {1.};
+    std::string repr {"Unknown"};
 };
 
 struct Vertex {
@@ -27,7 +27,7 @@ enum class ElementType {
 };
 
 struct Element {
-    std::vector<std::size_t> vIndices; 
+    std::vector<std::size_t> vIndices;
     ElementType type;
 };
 
@@ -49,5 +49,5 @@ struct Mesh {
     std::optional<std::vector<Group>> groups;
 };
 
-Mesh read(std::ifstream &stream);
+auto read(std::ifstream& stream) -> Mesh;
 } // namespace unv

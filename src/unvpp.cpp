@@ -6,7 +6,7 @@
 
 namespace unv {
 
-Mesh read(std::ifstream &stream) {
+auto read(std::ifstream& stream) -> Mesh {
     auto fileStream = FileStream(stream);
     auto reader = Reader(fileStream);
 
@@ -16,11 +16,13 @@ Mesh read(std::ifstream &stream) {
 
     mesh.unitsSystem =
         reader.units().code > 0 ? std::optional(reader.units()) : std::nullopt;
+
     mesh.vertices = std::move(reader.vertices());
-    mesh.elements = reader.elements().size() > 0
+
+    mesh.elements = !reader.elements().empty()
                         ? std::optional(std::move(reader.elements()))
                         : std::nullopt;
-    mesh.groups = reader.groups().size() > 0
+    mesh.groups = !reader.groups().empty()
                       ? std::optional(std::move(reader.groups()))
                       : std::nullopt;
 

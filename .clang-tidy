@@ -1,0 +1,2 @@
+Checks: '-*,modernize-*, readability-*, performance-*, misc-*, -readability-magic-numbers'
+WarningsAsErrors: '*'

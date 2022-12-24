@@ -1,25 +1,20 @@
 #pragma once
 
 #include <fstream>
-#include <sstream>
 #include <string>
 #include <vector>
 
 namespace unv {
 class FileStream {
-  public:
+public:
     FileStream() = delete;
-    FileStream(std::ifstream &fstream);
+    FileStream(std::ifstream& fstream);
     ~FileStream();
 
-    bool readLine(std::string &line);
-    std::size_t readFirstScalar(const std::string &line);
-    std::vector<std::size_t> readScalars(const std::string &line,
-                                         std::size_t n);
-    std::vector<double> readDoubles(const std::string &line, std::size_t n);
+    auto readLine(std::string& line) -> bool;
 
-  private:
-    std::ifstream *file_stream;
+private:
+    std::ifstream* file_stream;
 };
 
 } // namespace unv

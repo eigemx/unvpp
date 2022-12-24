@@ -3,6 +3,7 @@
 #include <cctype>
 #include <charconv>
 #include <initializer_list>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -12,8 +13,8 @@
 #include "stream.h"
 
 namespace unv {
-std::size_t verticesCount(std::size_t unv_element_id);
-ElementType elementType(std::size_t unv_element_id);
+auto verticesCount(std::size_t unv_element_id) -> std::size_t;
+auto elementType(std::size_t unv_element_id) -> ElementType;
 
 const std::vector<std::string> unv_units_codes = {
     "Unknown",                // 0
@@ -35,7 +36,7 @@ const auto UNITS_TAG = "   164";
 const auto VERTICES_TAG = "  2411";
 const auto ELEMENTS_TAG = "  2412";
 const auto DOFS_TAG = "   757";
-const std::string GROUP_TAGS[] = {"  2452", "  2467"};
+const std::array<std::string, 2> GROUP_TAGS = {"  2452", "  2467"};
 
 enum class TagType {
     Separator,
@@ -47,7 +48,7 @@ enum class TagType {
     Unsupported,
 };
 
-inline TagType tagTypeFromStr(const std::string &tag) {
+inline auto tagTypeFromStr(const std::string& tag) -> TagType {
     if (tag == SEPARATOR) {
         return TagType::Separator;
     }
@@ -55,19 +56,19 @@ inline TagType tagTypeFromStr(const std::string &tag) {
         return TagType::Units;
     }
 
-    else if (tag == ELEMENTS_TAG) {
+    if (tag == ELEMENTS_TAG) {
         return TagType::Elements;
     }
 
-    else if (tag == VERTICES_TAG) {
+    if (tag == VERTICES_TAG) {
         return TagType::Vertices;
     }
 
-    else if (tag == DOFS_TAG) {
+    if (tag == DOFS_TAG) {
         return TagType::DOFs;
     }
 
-    else if (tag == GROUP_TAGS[0] || tag == GROUP_TAGS[1]) {
+    if (tag == GROUP_TAGS[0] || tag == GROUP_TAGS[1]) {
         return TagType::Group;
     }
 
@@ -78,7 +79,7 @@ inline TagType tagTypeFromStr(const std::string &tag) {
 const auto POINT_GROUP = "7";
 const auto ELEMENT_GROUP = "8";
 
-inline std::size_t verticesCount(std::size_t unv_element_id) {
+inline auto verticesCount(std::size_t unv_element_id) -> std::size_t {
     switch (unv_element_id) {
     case 11: // rod
     case 21: // linear beam
@@ -110,7 +111,7 @@ inline std::size_t verticesCount(std::size_t unv_element_id) {
     }
 }
 
-inline ElementType elementType(std::size_t unv_element_id) {
+inline auto elementType(std::size_t unv_element_id) -> ElementType {
     switch (unv_element_id) {
     case 11:
     case 21:
@@ -142,17 +143,18 @@ inline ElementType elementType(std::size_t unv_element_id) {
     }
 }
 
-inline bool isSeparator(const std::string &line) {
+inline auto isSeparator(const std::string& line) -> bool {
     return line.substr(0, 6) == SEPARATOR;
 }
 
-inline bool isBeamType(ElementType element_type) {
+inline auto isBeamType(ElementType element_type) -> bool {
     return element_type == ElementType::Line;
 }
 
-inline std::vector<std::string> split(const std::string &line) {
+inline auto split(const std::string& line) -> std::vector<std::string> {
     std::vector<std::string> result;
     result.reserve(10);
+
     std::stringstream ss(line);
     std::string item;
 
@@ -164,7 +166,7 @@ inline std::vector<std::string> split(const std::string &line) {
     return result;
 }
 
-template <typename T> inline T parseNumber(const std::string &str) {
+template <typename T> inline auto parseNumber(const std::string& str) -> T {
     T x;
     auto [p, ec] = std::from_chars(str.data(), str.data() + str.size(), x);
     if (p == str.data()) {
@@ -177,22 +179,22 @@ template <typename T> inline T parseNumber(const std::string &str) {
 
 // https://stackoverflow.com/a/217605/2839539
 // trim from start (in place)
-inline void ltrim(std::string &s) {
+inline void ltrim(std::string& s) {
     s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
-                return !std::isspace(ch);
+                return !static_cast<bool>(std::isspace(ch));
             }));
 }
 
 // trim from end (in place)
-inline void rtrim(std::string &s) {
+inline void rtrim(std::string& s) {
     s.erase(std::find_if(s.rbegin(), s.rend(),
-                         [](unsigned char ch) { return !std::isspace(ch); })
+                         [](unsigned char ch) { return !static_cast<bool>(std::isspace(ch)); })
                 .base(),
             s.end());
 }
 
 // trim from both ends (in place)
-inline void trim(std::string &s) {
+inline void trim(std::string& s) {
     ltrim(s);
     rtrim(s);
 }

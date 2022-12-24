@@ -1,14 +1,21 @@
 #pragma once
 #include "common.h"
 #include "stream.h"
+#include <sstream>
 #include <unordered_map>
 #include <utility>
 
+
 namespace unv {
+
+auto static readFirstScalar(const std::string& line) -> std::size_t;
+auto static readScalars(const std::string& line, std::size_t n) -> std::vector<std::size_t>;
+auto static readDoubles(const std::string& line, std::size_t n) -> std::vector<double>;
+
 class Reader {
-  public:
+public:
     Reader() = delete;
-    Reader(FileStream &stream) : _stream(stream){};
+    Reader(FileStream& stream) : _stream(stream) {};
     ~Reader() { _stream.~FileStream(); }
 
     void readTags();
@@ -18,27 +25,27 @@ class Reader {
     void readGroups();
     void readDOFs();
 
-    UnitsSystem &units();
-    std::vector<Vertex> &vertices();
-    std::vector<Element> &elements();
-    std::vector<Group> &groups();
+    auto units() -> UnitsSystem&;
+    auto vertices() -> std::vector<Vertex>&;
+    auto elements() -> std::vector<Element>&;
+    auto groups() -> std::vector<Group>&;
 
-  private:
+private:
     inline void skipTag() {
         while (_stream.readLine(_tempLine) && !isSeparator(_tempLine)) {
         }
     }
 
     template <typename T = std::pair<std::vector<std::size_t>, GroupType>>
-    T readGroupElements(std::size_t n_elements);
+    auto readGroupElements(std::size_t n_elements) -> T;
 
     template <typename T = std::pair<std::vector<std::size_t>, GroupType>>
-    T readGroupElementsTwoColumns(std::size_t n_elements);
+    auto readGroupElementsTwoColumns(std::size_t n_elements) -> T;
 
     template <typename T = std::pair<std::vector<std::size_t>, GroupType>>
-    T readGroupElementsSingleColumn();
+    auto readGroupElementsSingleColumn() -> T;
 
-    FileStream &_stream;
+    FileStream& _stream;
     std::string _tempLine;
 
     UnitsSystem _unitsSystem;

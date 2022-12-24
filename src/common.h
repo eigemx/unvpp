@@ -1,13 +1,14 @@
 #pragma once
 #include <algorithm>
+#include <array>
 #include <cctype>
 #include <charconv>
 #include <initializer_list>
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <vector>
-#include <array>
 
 #include <unvpp/unvpp.h>
 
@@ -167,7 +168,45 @@ inline auto split(const std::string& line) -> std::vector<std::string> {
     return result;
 }
 
-template <typename T> inline auto parseNumber(const std::string& str) -> T {
+// Careful!
+// this is buggy if there are trailing whitespace in input string
+auto inline split_views(const std::string_view str) -> std::vector<std::string_view> {
+    std::size_t i {0};
+    std::size_t j {0};
+    std::size_t len = str.length();
+    std::vector<std::string_view> res;
+    res.reserve(6);
+
+    // ignore trailing whitespace
+    while (str[i] == ' ') {
+        i++;
+    }
+
+    j = i;
+
+    while (j < len) {
+        if (str[j] == ' ') {
+            // found an item!
+            res.emplace_back(std::string_view(str.data() + i, j - i));
+
+            // ignore next whitespace, if any
+            while (str[j] == ' ') {
+                j++;
+            }
+
+            i = j;
+        }
+        j++;
+    }
+
+    if (i != j) {
+        res.emplace_back(std::string_view(str.data() + i, j - i));
+    }
+
+    return res;
+}
+
+template <typename T> inline auto parseNumber(std::string_view str) -> T {
     T x;
     auto [p, ec] = std::from_chars(str.data(), str.data() + str.size(), x);
     if (p == str.data()) {

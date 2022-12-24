@@ -1,43 +1,26 @@
 #include "reader.h"
 
 #include <cmath>
+#include <iostream>
 #include <unordered_map>
 
 namespace unv {
 
-auto readFirstScalar(const std::string& line) -> std::size_t {
-    std::size_t scalar;
-    std::stringstream ss(line);
-
-    ss >> scalar;
-
-    return scalar;
+auto inline readFirstScalar(const std::string& line) -> std::size_t {
+    return std::stol(line);
 }
 
-auto readScalars(const std::string& line, std::size_t n) -> std::vector<std::size_t> {
+auto inline readScalars(const std::string& line, std::size_t n) -> std::vector<std::size_t> {
     std::vector<std::size_t> scalars;
     std::size_t scalar;
     scalars.reserve(n);
-    std::stringstream ss(line);
 
-    for (std::size_t i = 0; i < n; i++) {
-        ss >> scalar;
-        scalars.push_back(scalar);
+    auto views = split_views(std::string_view(line));
+
+    for (std::size_t i = 0; i < n; ++i) {
+        scalars.push_back(std::stol(views[i].data()));
     }
     return scalars;
-}
-
-auto readDoubles(const std::string& line, std::size_t n) -> std::vector<double> {
-    std::vector<double> doubles;
-    double d;
-    doubles.reserve(n);
-    std::stringstream ss(line);
-
-    for (std::size_t i = 0; i < n; i++) {
-        ss >> d;
-        doubles.push_back(d);
-    }
-    return doubles;
 }
 
 void Reader::readTags() {
@@ -78,7 +61,7 @@ void Reader::readUnits() {
     std::size_t unit_code = 0;
 
     _stream.readLine(_tempLine);
-    unit_code = readScalars(_tempLine, 1)[0];
+    unit_code = readFirstScalar(_tempLine);
 
     _stream.readLine(_tempLine);
     auto lengthScale = std::stod(_tempLine.substr(0, 25));
@@ -103,28 +86,31 @@ void Reader::readUnits() {
 }
 
 void Reader::readVertices() {
-    std::size_t current_point_id = 0;
-    std::size_t point_unv_id = 0;
+    std::size_t current_point_id {0};
+    std::size_t point_unv_id {0};
 
     while (_stream.readLine(_tempLine)) {
         if (isSeparator(_tempLine)) {
             break;
         }
 
-        point_unv_id = std::stoi(_tempLine.substr(0, 10));
-        //point_unv_id = parseNumber<std::size_t>(_tempLine.substr(0, 10));
+        auto view = std::string_view(_tempLine);
+
+        point_unv_id = std::stoi(view.substr(0, 10).data());
 
         if (!_stream.readLine(_tempLine)) {
             throw std::runtime_error("Failed to read point coordinates");
         }
 
+        view = std::string_view(_tempLine);
+
         _vertices.push_back(Vertex {
-            // clang does not support from_chars floating point numbers conversion
-            // in future replace std::stod() to parseNumber()
-            std::stod(_tempLine.substr(0, 25)),
-            std::stod(_tempLine.substr(25, 25)),
-            std::stod(_tempLine.substr(50, 25)),
+            std::stod(view.substr(0, 25).data()),
+            std::stod(view.substr(25, 25).data()),
+            std::stod(view.substr(50, 25).data()),
+
         });
+
         _vertex_id_map[point_unv_id] = current_point_id++;
     }
 }
@@ -140,10 +126,11 @@ void Reader::readElements() {
             break;
         }
 
-        auto records = readScalars(_tempLine, 6);
-        element_unv_id = records[0];
-        element_type = elementType(records[1]);
-        vertex_count = records[5];
+        //auto records = readScalars(_tempLine, 6);
+        auto records = split_views(std::string_view(_tempLine));
+        element_unv_id = std::stoi(records[0].data());
+        element_type = elementType(std::stoi(records[1].data()));
+        vertex_count = std::stoi(records[5].data());
 
         _stream.readLine(_tempLine);
 

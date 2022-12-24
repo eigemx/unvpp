@@ -10,7 +10,6 @@ namespace unv {
 
 auto static readFirstScalar(const std::string& line) -> std::size_t;
 auto static readScalars(const std::string& line, std::size_t n) -> std::vector<std::size_t>;
-auto static readDoubles(const std::string& line, std::size_t n) -> std::vector<double>;
 
 class Reader {
 public:

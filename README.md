@@ -3,7 +3,7 @@
 [![cmake-linux](https://github.com/eigenemara/unvpp/actions/workflows/cmake-linux.yml/badge.svg)](https://github.com/eigenemara/unvpp/actions/workflows/cmake-linux.yml)
 [![cmake-windows](https://github.com/eigenemara/unvpp/actions/workflows/cmake-windows.yml/badge.svg)](https://github.com/eigenemara/unvpp/actions/workflows/cmake-windows.yml)
 
-A C++ library for reading Ideas-UNV mesh format
+A C++17 library for reading Ideas-UNV mesh format
 
 ## Usage
 
@@ -43,4 +43,4 @@ A C++ library for reading Ideas-UNV mesh format
     }
 
 
-unvpp is a minimal library, you can understand more about the various types included in `unv::Mesh` struct by simply inspecting `<unvpp/unvpp.h>` file!
+unvpp is designed to have a minimal interface, you can understand more about the various types included in `unv::Mesh` struct by simply inspecting `<unvpp/unvpp.h>` file!

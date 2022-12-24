@@ -126,11 +126,10 @@ void Reader::readElements() {
             break;
         }
 
-        //auto records = readScalars(_tempLine, 6);
-        auto records = split_views(std::string_view(_tempLine));
-        element_unv_id = std::stoi(records[0].data());
-        element_type = elementType(std::stoi(records[1].data()));
-        vertex_count = std::stoi(records[5].data());
+        auto records = readScalars(_tempLine, 6);
+        element_unv_id = records[0];
+        element_type = elementType(records[1]);
+        vertex_count = records[5];
 
         _stream.readLine(_tempLine);
 
@@ -201,7 +200,7 @@ void Reader::readDOFs() {
             if (isSeparator(_tempLine)) {
                 break;
             }
-            group_vertices.push_back(_vertex_id_map[readScalars(_tempLine, 1)[0]]);
+            group_vertices.push_back(_vertex_id_map[readFirstScalar(_tempLine)]);
         }
 
         _groups.push_back(Group {

@@ -22,6 +22,7 @@ auto inline read_n_scalars(const std::string& line, std::size_t n) -> std::vecto
     return scalars;
 }
 
+// overload for string_view line input
 auto inline read_n_scalars(const std::string_view line, std::size_t n) -> std::vector<std::size_t> {
     std::vector<std::size_t> scalars;
     scalars.reserve(n);
@@ -131,7 +132,7 @@ void Reader::read_elements() {
     std::size_t current_element_id {0};
     std::size_t element_unv_id {0};
     std::size_t vertex_count {0};
-    ElementType element_type;
+    ElementType element_type {ElementType::Hex}; // make clang-tidy happy
 
     while (stream.read_line(temp_line)) {
         if (is_separator(temp_line)) {
@@ -257,6 +258,7 @@ template <typename T> auto Reader::read_group_elements(std::size_t n_elements) -
 }
 
 template <typename T> auto Reader::read_group_elements_two_columns(std::size_t n_elements) -> T {
+    // Note: this causes a narrowing conversion from 'std::size_t' to 'double
     auto n_rows = static_cast<std::size_t>(n_elements / 2.0);
     std::vector<size_t> elements;
     elements.resize(n_elements + 1);

@@ -10,11 +10,11 @@ auto read(std::ifstream& stream) -> Mesh {
     auto fileStream = FileStream(stream);
     auto reader = Reader(fileStream);
 
-    reader.readTags();
+    reader.read_tags();
 
     Mesh mesh;
 
-    mesh.unitsSystem =
+    mesh.units_system =
         reader.units().code > 0 ? std::optional(reader.units()) : std::nullopt;
 
     mesh.vertices = std::move(reader.vertices());

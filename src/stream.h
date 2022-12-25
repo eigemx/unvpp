@@ -11,7 +11,7 @@ public:
     FileStream(std::ifstream& fstream);
     ~FileStream();
 
-    auto readLine(std::string& line) -> bool;
+    auto read_line(std::string& line) -> bool;
 
 private:
     std::ifstream* file_stream;

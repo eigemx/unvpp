@@ -15,8 +15,8 @@
 #include "stream.h"
 
 namespace unv {
-auto verticesCount(std::size_t unv_element_id) -> std::size_t;
-auto elementType(std::size_t unv_element_id) -> ElementType;
+auto vertices_count_from_element_id(std::size_t unv_element_id) -> std::size_t;
+auto element_type_from_element_id(std::size_t unv_element_id) -> ElementType;
 
 const std::vector<std::string> unv_units_codes = {
     "Unknown",                // 0
@@ -50,7 +50,7 @@ enum class TagType {
     Unsupported,
 };
 
-inline auto tagTypeFromStr(const std::string& tag) -> TagType {
+inline auto tag_type_from_string(const std::string& tag) -> TagType {
     if (tag == SEPARATOR) {
         return TagType::Separator;
     }
@@ -81,7 +81,7 @@ inline auto tagTypeFromStr(const std::string& tag) -> TagType {
 const auto POINT_GROUP = "7";
 const auto ELEMENT_GROUP = "8";
 
-inline auto verticesCount(std::size_t unv_element_id) -> std::size_t {
+inline auto vertices_count_from_element_id(std::size_t unv_element_id) -> std::size_t {
     switch (unv_element_id) {
     case 11: // rod
     case 21: // linear beam
@@ -113,7 +113,7 @@ inline auto verticesCount(std::size_t unv_element_id) -> std::size_t {
     }
 }
 
-inline auto elementType(std::size_t unv_element_id) -> ElementType {
+inline auto element_type_from_element_id(std::size_t unv_element_id) -> ElementType {
     switch (unv_element_id) {
     case 11:
     case 21:
@@ -145,11 +145,11 @@ inline auto elementType(std::size_t unv_element_id) -> ElementType {
     }
 }
 
-inline auto isSeparator(const std::string& line) -> bool {
+inline auto is_separator(const std::string& line) -> bool {
     return line.substr(0, 6) == SEPARATOR;
 }
 
-inline auto isBeamType(ElementType element_type) -> bool {
+inline auto is_beam_type(ElementType element_type) -> bool {
     return element_type == ElementType::Line;
 }
 
@@ -170,14 +170,14 @@ inline auto split(const std::string& line) -> std::vector<std::string> {
 
 // Careful!
 // this is buggy if there are trailing whitespace in input string
-auto inline split_views(const std::string_view str) -> std::vector<std::string_view> {
+auto inline split_to_views(const std::string_view str) -> std::vector<std::string_view> {
     std::size_t i {0};
     std::size_t j {0};
     std::size_t len = str.length();
     std::vector<std::string_view> res;
     res.reserve(6);
 
-    // ignore trailing whitespace
+    // trim left whitespace
     while (str[i] == ' ') {
         i++;
     }
@@ -206,7 +206,7 @@ auto inline split_views(const std::string_view str) -> std::vector<std::string_v
     return res;
 }
 
-template <typename T> inline auto parseNumber(std::string_view str) -> T {
+template <typename T> inline auto parse_number(std::string_view str) -> T {
     T x;
     auto [p, ec] = std::from_chars(str.data(), str.data() + str.size(), x);
     if (p == str.data()) {

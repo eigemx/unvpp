@@ -6,16 +6,17 @@
 
 namespace unv {
 
-auto inline readFirstScalar(const std::string& line) -> std::size_t {
+auto inline read_first_scalar(const std::string& line) -> std::size_t {
     return std::stol(line);
 }
 
-auto inline readScalars(const std::string& line, std::size_t n) -> std::vector<std::size_t> {
+// TODO: make `line` a std::string_view, to avoid unnecessary constructors
+auto inline read_n_scalars(const std::string& line, std::size_t n) -> std::vector<std::size_t> {
     std::vector<std::size_t> scalars;
     std::size_t scalar;
     scalars.reserve(n);
 
-    auto views = split_views(std::string_view(line));
+    auto views = split_to_views(std::string_view(line));
 
     for (std::size_t i = 0; i < n; ++i) {
         scalars.push_back(std::stol(views[i].data()));
@@ -23,48 +24,62 @@ auto inline readScalars(const std::string& line, std::size_t n) -> std::vector<s
     return scalars;
 }
 
-void Reader::readTags() {
-    while (_stream.readLine(_tempLine)) {
-        if (isSeparator(_tempLine)) {
+auto inline read_n_scalars(const std::string_view line, std::size_t n) -> std::vector<std::size_t> {
+    std::vector<std::size_t> scalars;
+    std::size_t scalar;
+    scalars.reserve(n);
+
+    auto views = split_to_views(line);
+
+    for (std::size_t i = 0; i < n; ++i) {
+        scalars.push_back(std::stol(views[i].data()));
+    }
+    return scalars;
+}
+
+
+void Reader::read_tags() {
+    while (stream.read_line(temp_line)) {
+        if (is_separator(temp_line)) {
             continue;
         }
 
-        switch (tagTypeFromStr(_tempLine)) {
+        switch (tag_type_from_string(temp_line)) {
         case TagType::Units:
-            readUnits();
+            read_units();
             break;
 
         case TagType::Elements:
-            readElements();
+            read_elements();
             break;
 
         case TagType::Vertices:
-            readVertices();
+            read_vertices();
             break;
 
         case TagType::Group:
-            readGroups();
+            read_groups();
             break;
 
         case TagType::DOFs:
-            readDOFs();
+            read_dofs();
             break;
 
         default:
             // Unsupported tags are skipped.
-            skipTag();
+            skip_tag();
         }
     }
 }
 
-void Reader::readUnits() {
+void Reader::read_units() {
     std::size_t unit_code = 0;
 
-    _stream.readLine(_tempLine);
-    unit_code = readFirstScalar(_tempLine);
+    stream.read_line(temp_line);
+    unit_code = read_first_scalar(temp_line);
 
-    _stream.readLine(_tempLine);
-    auto lengthScale = std::stod(_tempLine.substr(0, 25));
+    stream.read_line(temp_line);
+    auto length_scale = std::stod(temp_line.substr(0, 25));
 
     // Unit tag also include force scale, temperature scale and temperature
     // offset, but, since unvpp is mainly a mesh parser, data related to
@@ -76,33 +91,33 @@ void Reader::readUnits() {
         repr = unv_units_codes.at(unit_code);
     }
 
-    skipTag();
+    skip_tag();
 
-    _unitsSystem = UnitsSystem {
+    units_system = UnitsSystem {
         unit_code,
-        lengthScale,
+        length_scale,
         repr,
     };
 }
 
-void Reader::readVertices() {
+void Reader::read_vertices() {
     std::size_t current_point_id {0};
     std::size_t point_unv_id {0};
 
-    while (_stream.readLine(_tempLine)) {
-        if (isSeparator(_tempLine)) {
+    while (stream.read_line(temp_line)) {
+        if (is_separator(temp_line)) {
             break;
         }
 
-        auto view = std::string_view(_tempLine);
+        auto view = std::string_view(temp_line);
 
         point_unv_id = std::stoi(view.substr(0, 10).data());
 
-        if (!_stream.readLine(_tempLine)) {
+        if (!stream.read_line(temp_line)) {
             throw std::runtime_error("Failed to read point coordinates");
         }
 
-        view = std::string_view(_tempLine);
+        view = std::string_view(temp_line);
 
         _vertices.push_back(Vertex {
             std::stod(view.substr(0, 25).data()),
@@ -111,66 +126,68 @@ void Reader::readVertices() {
 
         });
 
-        _vertex_id_map[point_unv_id] = current_point_id++;
+        vertex_id_map[point_unv_id] = current_point_id++;
     }
 }
 
-void Reader::readElements() {
+void Reader::read_elements() {
     std::size_t current_element_id {0};
     std::size_t element_unv_id {0};
     std::size_t vertex_count {0};
     ElementType element_type;
 
-    while (_stream.readLine(_tempLine)) {
-        if (isSeparator(_tempLine)) {
+    while (stream.read_line(temp_line)) {
+        if (is_separator(temp_line)) {
             break;
         }
 
-        auto records = readScalars(_tempLine, 6);
+        auto line_str_view = std::string_view(temp_line);
+        auto records = read_n_scalars(line_str_view, 6);
         element_unv_id = records[0];
-        element_type = elementType(records[1]);
+        element_type = element_type_from_element_id(records[1]);
         vertex_count = records[5];
 
-        _stream.readLine(_tempLine);
+        stream.read_line(temp_line);
 
-        if (isBeamType(element_type)) {
-            _stream.readLine(_tempLine);
+        if (is_beam_type(element_type)) {
+            stream.read_line(temp_line);
         }
 
-        auto vIndices = readScalars(_tempLine, vertex_count);
+        line_str_view = std::string_view(temp_line);
+        auto vertices_ids = read_n_scalars(line_str_view, vertex_count);
 
         // map UNV vertex indices to ordered vertex indices
-        for (std::size_t& vIndex : vIndices) {
-            vIndex = _vertex_id_map[vIndex];
+        for (std::size_t& vIndex : vertices_ids) {
+            vIndex = vertex_id_map[vIndex];
         }
 
         _elements.push_back(Element {
-            std::move(vIndices),
+            std::move(vertices_ids),
             element_type,
         });
 
-        _element_id_map[element_unv_id] = current_element_id++;
+        element_id_map[element_unv_id] = current_element_id++;
     }
 }
 
-void Reader::readGroups() {
-    while (_stream.readLine(_tempLine)) {
-        if (isSeparator(_tempLine)) {
+void Reader::read_groups() {
+    while (stream.read_line(temp_line)) {
+        if (is_separator(temp_line)) {
             break;
         }
 
-        auto tokens = split(_tempLine);
+        auto tokens = split(temp_line);
         auto n_elements = std::stoi(tokens.back());
 
         // get group name
-        if (!_stream.readLine(_tempLine)) {
+        if (!stream.read_line(temp_line)) {
             throw std::runtime_error("Failed to read group name");
         }
 
-        auto group_name = split(_tempLine).at(0);
+        auto group_name = split(temp_line).at(0);
         trim(group_name);
 
-        auto [group_elements, group_type] = readGroupElements(n_elements);
+        auto [group_elements, group_type] = read_group_elements(n_elements);
 
         _groups.push_back(Group {
             group_name,
@@ -180,27 +197,27 @@ void Reader::readGroups() {
     }
 }
 
-void Reader::readDOFs() {
-    while (_stream.readLine(_tempLine)) {
-        if (isSeparator(_tempLine)) {
+void Reader::read_dofs() {
+    while (stream.read_line(temp_line)) {
+        if (is_separator(temp_line)) {
             break;
         }
 
         // get patch name
-        if (!_stream.readLine(_tempLine)) {
+        if (!stream.read_line(temp_line)) {
             throw std::runtime_error("Failed to read group name in DOFs tag");
         }
 
-        auto group_name = split(_tempLine).at(0);
+        auto group_name = split(temp_line).at(0);
         trim(group_name);
 
         std::vector<std::size_t> group_vertices;
 
-        while (_stream.readLine(_tempLine)) {
-            if (isSeparator(_tempLine)) {
+        while (stream.read_line(temp_line)) {
+            if (is_separator(temp_line)) {
                 break;
             }
-            group_vertices.push_back(_vertex_id_map[readFirstScalar(_tempLine)]);
+            group_vertices.push_back(vertex_id_map[read_first_scalar(temp_line)]);
         }
 
         _groups.push_back(Group {
@@ -212,7 +229,7 @@ void Reader::readDOFs() {
 }
 
 auto Reader::units() -> UnitsSystem& {
-    return _unitsSystem;
+    return units_system;
 }
 
 auto Reader::vertices() -> std::vector<Vertex>& {
@@ -227,22 +244,22 @@ auto Reader::groups() -> std::vector<Group>& {
     return _groups;
 }
 
-template <typename T> auto Reader::readGroupElements(std::size_t n_elements) -> T {
+template <typename T> auto Reader::read_group_elements(std::size_t n_elements) -> T {
     if (n_elements == 1) {
-        return readGroupElementsSingleColumn();
+        return read_group_elements_single_column();
     }
 
     if (n_elements % 2 == 0) {
-        return readGroupElementsTwoColumns(n_elements);
+        return read_group_elements_two_columns(n_elements);
     }
 
-    auto [elements, group_type] = readGroupElementsTwoColumns(n_elements - 1);
-    elements.push_back(readGroupElementsSingleColumn().first.at(0));
+    auto [elements, group_type] = read_group_elements_two_columns(n_elements - 1);
+    elements.push_back(read_group_elements_single_column().first.at(0));
 
     return std::make_pair(elements, group_type);
 }
 
-template <typename T> auto Reader::readGroupElementsTwoColumns(std::size_t n_elements) -> T {
+template <typename T> auto Reader::read_group_elements_two_columns(std::size_t n_elements) -> T {
     auto n_rows = static_cast<std::size_t>(n_elements / 2.0);
     std::vector<size_t> elements;
     elements.resize(n_elements + 1);
@@ -251,11 +268,11 @@ template <typename T> auto Reader::readGroupElementsTwoColumns(std::size_t n_ele
 
     std::vector<std::size_t> records;
     for (std::size_t i = 0; i < n_rows; ++i) {
-        if (!_stream.readLine(_tempLine)) {
+        if (!stream.read_line(temp_line)) {
             throw std::runtime_error("Failed to read group element");
         }
 
-        records = readScalars(_tempLine, 6);
+        records = read_n_scalars(temp_line, 6);
         elements[current_element_number] = records[1];
         elements[current_element_number + 1] = records[5];
         current_element_number += 2;
@@ -266,12 +283,12 @@ template <typename T> auto Reader::readGroupElementsTwoColumns(std::size_t n_ele
     return std::make_pair(std::move(elements), group_type);
 }
 
-template <typename T> auto Reader::readGroupElementsSingleColumn() -> T {
-    if (!_stream.readLine(_tempLine)) {
+template <typename T> auto Reader::read_group_elements_single_column() -> T {
+    if (!stream.read_line(temp_line)) {
         throw std::runtime_error("Failed to read group element");
     }
 
-    auto records = readScalars(_tempLine, 2);
+    auto records = read_n_scalars(temp_line, 2);
     auto element = std::vector<std::size_t>({records[1]});
     auto group_type = records[0] == 8 ? GroupType::Cell : GroupType::Point;
 

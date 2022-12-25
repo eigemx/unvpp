@@ -27,7 +27,7 @@ enum class ElementType {
 };
 
 struct Element {
-    std::vector<std::size_t> vIndices;
+    std::vector<std::size_t> vertices_ids;
     ElementType type;
 };
 
@@ -39,11 +39,11 @@ enum class GroupType {
 struct Group {
     std::string name;
     GroupType type;
-    std::vector<std::size_t> eIndices;
+    std::vector<std::size_t> elements_ids;
 };
 
 struct Mesh {
-    std::optional<UnitsSystem> unitsSystem;
+    std::optional<UnitsSystem> units_system;
     std::vector<Vertex> vertices;
     std::optional<std::vector<Element>> elements;
     std::optional<std::vector<Group>> groups;

@@ -12,8 +12,7 @@ auto main(int argc, char* argv[]) -> int {
         return -1;
     }
 
-    std::ios::sync_with_stdio(false);
-    std::ifstream stream(argv[1], std::ios::binary);
+    std::ifstream stream(argv[1]);
 
     // measure time of execution
     auto start = std::chrono::high_resolution_clock::now();
@@ -22,14 +21,14 @@ auto main(int argc, char* argv[]) -> int {
 
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
-    std::cout << "Units system: " << mesh.unitsSystem.value_or(unv::UnitsSystem()).repr
+    std::cout << "Units system: " << mesh.units_system.value_or(unv::UnitsSystem()).repr
               << std::endl;
     std::cout << "Vertices count = " << mesh.vertices.size() << std::endl;
     std::cout << "Elements count = " << mesh.elements.value_or(std::vector<unv::Element>()).size()
               << std::endl;
 
     for (auto& group : mesh.groups.value_or(std::vector<unv::Group>())) {
-        std::cout << "Group name: " << group.name << " - elements count = " << group.eIndices.size()
+        std::cout << "Group name: " << group.name << " - elements count = " << group.elements_ids.size()
                   << std::endl;
     }
 

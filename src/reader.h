@@ -15,6 +15,10 @@ class Reader {
 public:
     Reader() = delete;
     Reader(FileStream& stream) : stream(stream) {};
+    Reader(Reader& other) = delete;
+    Reader(Reader&& other) = delete;
+    auto operator=(Reader& other) -> Reader& = delete;
+    auto operator=(Reader&& other) -> Reader& = delete;
     ~Reader() { stream.~FileStream(); }
 
     void read_tags();

@@ -10,10 +10,8 @@ auto inline read_first_scalar(const std::string& line) -> std::size_t {
     return std::stol(line);
 }
 
-// TODO: make `line` a std::string_view, to avoid unnecessary constructors
 auto inline read_n_scalars(const std::string& line, std::size_t n) -> std::vector<std::size_t> {
     std::vector<std::size_t> scalars;
-    std::size_t scalar;
     scalars.reserve(n);
 
     auto views = split_to_views(std::string_view(line));
@@ -26,7 +24,6 @@ auto inline read_n_scalars(const std::string& line, std::size_t n) -> std::vecto
 
 auto inline read_n_scalars(const std::string_view line, std::size_t n) -> std::vector<std::size_t> {
     std::vector<std::size_t> scalars;
-    std::size_t scalar;
     scalars.reserve(n);
 
     auto views = split_to_views(line);

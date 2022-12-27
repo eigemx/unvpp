@@ -110,7 +110,7 @@ void Reader::read_vertices() {
     while (stream.read_line(temp_line)) {
         auto line_str_view = std::string_view(temp_line);
 
-        if (is_separator(temp_line)) {
+        if (is_separator(line_str_view)) {
             break;
         }
 

@@ -12,7 +12,12 @@ auto main(int argc, char* argv[]) -> int {
         return -1;
     }
 
+    std::ios_base::sync_with_stdio(false);
     std::ifstream stream(argv[1]);
+
+    constexpr std::size_t buffer_size = 2065;
+    char buffer[buffer_size];
+    stream.rdbuf()->pubsetbuf(buffer, buffer_size);
 
     // measure time of execution
     auto start = std::chrono::high_resolution_clock::now();

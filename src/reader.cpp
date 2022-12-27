@@ -49,6 +49,9 @@ void Reader::read_tags() {
 
         case TagType::Elements:
             read_elements();
+
+            // adjust unv vertices index ordering for each element
+            adjust_vertices_ids();
             break;
 
         case TagType::Vertices:
@@ -57,7 +60,9 @@ void Reader::read_tags() {
 
         case TagType::Group:
             read_groups();
-            skip_tag();
+
+            // adjust unv elements index ordering for each group
+            adjust_elements_ids();
             break;
 
         case TagType::DOFs:
@@ -110,7 +115,7 @@ void Reader::read_vertices() {
             break;
         }
 
-        point_unv_id = std::stoi(line_str_view.substr(0, 10).data());
+        point_unv_id = std::stoul(line_str_view.substr(0, 10).data());
 
         if (!stream.read_line(temp_line)) {
             throw std::runtime_error("Failed to read point coordinates");
@@ -156,10 +161,6 @@ void Reader::read_elements() {
         line_str_view = std::string_view(temp_line);
         auto vertices_ids = read_n_scalars(line_str_view, vertex_count);
 
-        // map UNV vertex indices to ordered vertex indices
-        for (std::size_t& v_id : vertices_ids) {
-            v_id = vertex_id_map[v_id];
-        }
 
         _elements.push_back(Element {
             std::move(vertices_ids),
@@ -167,6 +168,22 @@ void Reader::read_elements() {
         });
 
         element_id_map[element_unv_id] = current_element_id++;
+    }
+}
+
+void Reader::adjust_vertices_ids() {
+    for (auto& element : _elements) {
+        for (auto& v_id : element.vertices_ids) {
+            v_id = vertex_id_map[v_id];
+        }
+    }
+}
+
+void Reader::adjust_elements_ids() {
+    for (auto& group : _groups) {
+        for (auto& e_id : group.elements_ids) {
+            e_id = element_id_map[e_id];
+        }
     }
 }
 
@@ -268,6 +285,7 @@ template <typename T> auto Reader::read_group_elements_two_columns(std::size_t n
     std::size_t current_element_number = 0;
 
     std::vector<std::size_t> records;
+
     for (std::size_t i = 0; i < n_rows; ++i) {
         if (!stream.read_line(temp_line)) {
             throw std::runtime_error("Failed to read group element");

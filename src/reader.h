@@ -39,6 +39,9 @@ private:
         }
     }
 
+    void adjust_vertices_ids();
+    void adjust_elements_ids();
+
     template <typename T = std::pair<std::vector<std::size_t>, GroupType>>
     auto read_group_elements(std::size_t n_elements) -> T;
 

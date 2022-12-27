@@ -149,6 +149,10 @@ inline auto is_separator(const std::string& line) -> bool {
     return line.substr(0, 6) == SEPARATOR;
 }
 
+inline auto is_separator(const std::string_view line) -> bool {
+    return line.substr(0, 6) == SEPARATOR;
+}
+
 inline auto is_beam_type(ElementType element_type) -> bool {
     return element_type == ElementType::Line;
 }

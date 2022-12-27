@@ -28,8 +28,8 @@ auto main(int argc, char* argv[]) -> int {
               << std::endl;
 
     for (auto& group : mesh.groups.value_or(std::vector<unv::Group>())) {
-        std::cout << "Group name: " << group.name << " - elements count = " << group.elements_ids.size()
-                  << std::endl;
+        std::cout << "Group name: " << group.name
+                  << " - elements count = " << group.elements_ids.size() << std::endl;
     }
 
     std::cout << std::setprecision(20) << "Time of execution: " << duration.count()

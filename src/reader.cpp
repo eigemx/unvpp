@@ -7,7 +7,7 @@
 namespace unv {
 
 auto inline read_first_scalar(const std::string& line) -> std::size_t {
-    return std::stol(line);
+    return std::stoul(line);
 }
 
 auto inline read_n_scalars(const std::string& line, std::size_t n) -> std::vector<std::size_t> {
@@ -17,7 +17,7 @@ auto inline read_n_scalars(const std::string& line, std::size_t n) -> std::vecto
     auto views = split_to_views(std::string_view(line));
 
     for (std::size_t i = 0; i < n; ++i) {
-        scalars.push_back(std::stol(views[i].data()));
+        scalars.push_back(std::stoul(views[i].data()));
     }
     return scalars;
 }
@@ -30,7 +30,7 @@ auto inline read_n_scalars(const std::string_view line, std::size_t n) -> std::v
     auto views = split_to_views(line);
 
     for (std::size_t i = 0; i < n; ++i) {
-        scalars.push_back(std::stol(views[i].data()));
+        scalars.push_back(std::stoul(views[i].data()));
     }
     return scalars;
 }
@@ -57,6 +57,7 @@ void Reader::read_tags() {
 
         case TagType::Group:
             read_groups();
+            skip_tag();
             break;
 
         case TagType::DOFs:
@@ -103,24 +104,24 @@ void Reader::read_vertices() {
     std::size_t point_unv_id {0};
 
     while (stream.read_line(temp_line)) {
+        auto line_str_view = std::string_view(temp_line);
+
         if (is_separator(temp_line)) {
             break;
         }
 
-        auto view = std::string_view(temp_line);
-
-        point_unv_id = std::stoi(view.substr(0, 10).data());
+        point_unv_id = std::stoi(line_str_view.substr(0, 10).data());
 
         if (!stream.read_line(temp_line)) {
             throw std::runtime_error("Failed to read point coordinates");
         }
 
-        view = std::string_view(temp_line);
+        line_str_view = std::string_view(temp_line);
 
         _vertices.push_back(Vertex {
-            std::stod(view.substr(0, 25).data()),
-            std::stod(view.substr(25, 25).data()),
-            std::stod(view.substr(50, 25).data()),
+            std::stod(line_str_view.substr(0, 25).data()),
+            std::stod(line_str_view.substr(25, 25).data()),
+            std::stod(line_str_view.substr(50, 25).data()),
 
         });
 
@@ -135,11 +136,12 @@ void Reader::read_elements() {
     ElementType element_type {ElementType::Hex}; // make clang-tidy happy
 
     while (stream.read_line(temp_line)) {
-        if (is_separator(temp_line)) {
+        auto line_str_view = std::string_view(temp_line);
+
+        if (is_separator(line_str_view)) {
             break;
         }
 
-        auto line_str_view = std::string_view(temp_line);
         auto records = read_n_scalars(line_str_view, 6);
         element_unv_id = records[0];
         element_type = element_type_from_element_id(records[1]);
@@ -155,8 +157,8 @@ void Reader::read_elements() {
         auto vertices_ids = read_n_scalars(line_str_view, vertex_count);
 
         // map UNV vertex indices to ordered vertex indices
-        for (std::size_t& vIndex : vertices_ids) {
-            vIndex = vertex_id_map[vIndex];
+        for (std::size_t& v_id : vertices_ids) {
+            v_id = vertex_id_map[v_id];
         }
 
         _elements.push_back(Element {
@@ -258,7 +260,7 @@ template <typename T> auto Reader::read_group_elements(std::size_t n_elements) -
 }
 
 template <typename T> auto Reader::read_group_elements_two_columns(std::size_t n_elements) -> T {
-    // Note: this causes a narrowing conversion from 'std::size_t' to 'double
+    // Warning: this causes a narrowing conversion from 'std::size_t' to 'double
     auto n_rows = static_cast<std::size_t>(n_elements / 2.0);
     std::vector<size_t> elements;
     elements.resize(n_elements + 1);
@@ -271,7 +273,8 @@ template <typename T> auto Reader::read_group_elements_two_columns(std::size_t n
             throw std::runtime_error("Failed to read group element");
         }
 
-        records = read_n_scalars(temp_line, 6);
+        auto line_str_view = std::string_view(temp_line);
+        records = read_n_scalars(line_str_view, 6);
         elements[current_element_number] = records[1];
         elements[current_element_number + 1] = records[5];
         current_element_number += 2;
@@ -279,7 +282,7 @@ template <typename T> auto Reader::read_group_elements_two_columns(std::size_t n
 
     auto group_type = records[0] == 8 ? GroupType::Cell : GroupType::Point;
 
-    return std::make_pair(std::move(elements), group_type);
+    return std::make_pair(elements, group_type);
 }
 
 template <typename T> auto Reader::read_group_elements_single_column() -> T {

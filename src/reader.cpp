@@ -106,7 +106,6 @@ void Reader::read_units() {
 
 void Reader::read_vertices() {
     std::size_t current_point_id {0};
-    std::size_t point_unv_id {0};
 
     while (stream.read_line(temp_line)) {
         auto line_str_view = std::string_view(temp_line);
@@ -115,7 +114,7 @@ void Reader::read_vertices() {
             break;
         }
 
-        point_unv_id = std::stoul(line_str_view.substr(0, 10).data());
+        auto point_unv_id = std::stoul(line_str_view.substr(0, 10).data());
 
         if (!stream.read_line(temp_line)) {
             throw std::runtime_error("Failed to read point coordinates");
@@ -136,9 +135,6 @@ void Reader::read_vertices() {
 
 void Reader::read_elements() {
     std::size_t current_element_id {0};
-    std::size_t element_unv_id {0};
-    std::size_t vertex_count {0};
-    ElementType element_type {ElementType::Hex}; // make clang-tidy happy
 
     while (stream.read_line(temp_line)) {
         auto line_str_view = std::string_view(temp_line);
@@ -148,9 +144,10 @@ void Reader::read_elements() {
         }
 
         auto records = read_n_scalars(line_str_view, 6);
-        element_unv_id = records[0];
-        element_type = element_type_from_element_id(records[1]);
-        vertex_count = records[5];
+
+        auto element_unv_id = records[0];
+        auto element_type = element_type_from_element_id(records[1]);
+        auto vertex_count = records[5];
 
         stream.read_line(temp_line);
 

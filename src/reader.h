@@ -29,7 +29,7 @@ public:
     void read_dofs();
 
     auto units() -> UnitsSystem&;
-    auto vertices() -> std::vector<Vertex>&;
+    auto vertices() -> std::vector<std::array<double, 3>>&;
     auto elements() -> std::vector<Element>&;
     auto groups() -> std::vector<Group>&;
 
@@ -55,7 +55,7 @@ private:
     std::string temp_line;
 
     UnitsSystem units_system;
-    std::vector<Vertex> _vertices;
+    std::vector<std::array<double, 3>> _vertices;
     std::vector<Element> _elements;
     std::vector<Group> _groups;
 

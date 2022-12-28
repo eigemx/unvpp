@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <optional>
 #include <string>
 #include <vector>
@@ -44,10 +45,10 @@ struct Group {
 
 struct Mesh {
     std::optional<UnitsSystem> units_system;
-    std::vector<Vertex> vertices;
+    std::vector<std::array<double, 3>> vertices;
     std::optional<std::vector<Element>> elements;
     std::optional<std::vector<Group>> groups;
 };
 
-auto read(std::ifstream& stream) -> Mesh;
+auto read(const std::string& file_name) -> Mesh;
 } // namespace unv

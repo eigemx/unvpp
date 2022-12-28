@@ -122,7 +122,7 @@ void Reader::read_vertices() {
 
         line_str_view = std::string_view(temp_line);
 
-        _vertices.push_back(Vertex {
+        _vertices.push_back(std::array<double, 3> {
             std::stod(line_str_view.substr(0, 25).data()),
             std::stod(line_str_view.substr(25, 25).data()),
             std::stod(line_str_view.substr(50, 25).data()),
@@ -246,7 +246,7 @@ auto Reader::units() -> UnitsSystem& {
     return units_system;
 }
 
-auto Reader::vertices() -> std::vector<Vertex>& {
+auto Reader::vertices() -> std::vector<std::array<double, 3>>& {
     return _vertices;
 }
 

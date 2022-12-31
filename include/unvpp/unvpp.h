@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <filesystem>
 #include <optional>
 #include <string>
 #include <vector>
@@ -8,15 +9,10 @@
 namespace unv {
 struct UnitsSystem {
     std::size_t code {0};
-    double lengthScale {1.};
+    double length_scale {1.};
     std::string repr {"Unknown"};
 };
 
-struct Vertex {
-    double x;
-    double y;
-    double z;
-};
 
 enum class ElementType {
     Line,
@@ -50,5 +46,6 @@ struct Mesh {
     std::optional<std::vector<Group>> groups;
 };
 
-auto read(const std::string& file_name) -> Mesh;
+auto read(const std::filesystem::path& path) -> Mesh;
+
 } // namespace unv

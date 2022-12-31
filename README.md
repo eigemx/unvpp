@@ -8,12 +8,9 @@ A C++17 library for reading Ideas-UNV mesh format
 ## Usage
 
     #include <unvpp/unvpp.h>
-    #include <fstream>
     #include <iostream>
 
     auto main() -> int {
-        std::ifstream stream("./my_mesh.unv");
-
         // read mesh, this will return a unv::Mesh struct:
         // struct Mesh {
         //      std::optional<UnitsSystem> unitsSystem;
@@ -21,7 +18,7 @@ A C++17 library for reading Ideas-UNV mesh format
         //      std::optional<std::vector<Element>> elements;
         //      std::optional<std::vector<Group>> groups;
         // };
-        auto mesh = unv::read(stream);
+        auto mesh = unv::read("./my_mesh.unv");
 
 
         // print string representation of the mesh system of units

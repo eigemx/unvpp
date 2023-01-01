@@ -28,9 +28,7 @@ struct Element {
     Element(std::vector<std::size_t>&& v, ElementType type)
         : _vertices_ids(std::move(v)), _type(type) {}
 
-    [[nodiscard]] auto inline vertices_ids() const -> const std::vector<std::size_t>& {
-        return _vertices_ids;
-    }
+    auto inline vertices_ids() -> std::vector<std::size_t>& { return _vertices_ids; }
     auto inline type() -> ElementType { return _type; }
 
 private:
@@ -49,9 +47,7 @@ struct Group {
 
     auto inline name() -> std::string& { return _name; }
     auto inline type() -> GroupType { return _type; }
-    [[nodiscard]] auto inline elements_ids() const -> const std::vector<std::size_t>& {
-        return _elements_ids;
-    }
+    auto inline elements_ids() -> std::vector<std::size_t>& { return _elements_ids; }
 
 private:
     std::string _name;

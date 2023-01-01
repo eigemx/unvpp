@@ -92,7 +92,7 @@ void Reader::read_units() {
     std::string repr;
 
     if (unit_code >= 0 && unit_code < unv_units_codes.size()) {
-        repr = unv_units_codes.at(unit_code);
+        repr = unv_units_codes[unit_code];
     }
 
     skip_tag();
@@ -122,12 +122,9 @@ void Reader::read_vertices() {
 
         line_str_view = std::string_view(temp_line);
 
-        _vertices.push_back(std::array<double, 3> {
-            std::stod(line_str_view.substr(0, 25).data()),
-            std::stod(line_str_view.substr(25, 25).data()),
-            std::stod(line_str_view.substr(50, 25).data()),
-
-        });
+        _vertices.push_back({std::stod(line_str_view.substr(0, 25).data()),
+                             std::stod(line_str_view.substr(25, 25).data()),
+                             std::stod(line_str_view.substr(50, 25).data())});
 
         vertex_id_map[point_unv_id] = current_point_id++;
     }
@@ -159,10 +156,7 @@ void Reader::read_elements() {
         auto vertices_ids = read_n_scalars(line_str_view, vertex_count);
 
 
-        _elements.push_back(Element {
-            std::move(vertices_ids),
-            element_type,
-        });
+        _elements.emplace_back(std::move(vertices_ids), element_type);
 
         element_id_map[element_unv_id] = current_element_id++;
     }
@@ -170,7 +164,7 @@ void Reader::read_elements() {
 
 void Reader::adjust_vertices_ids() {
     for (auto& element : _elements) {
-        for (auto& v_id : element.vertices_ids) {
+        for (auto& v_id : element.vertices_ids()) {
             v_id = vertex_id_map[v_id];
         }
     }
@@ -178,7 +172,7 @@ void Reader::adjust_vertices_ids() {
 
 void Reader::adjust_elements_ids() {
     for (auto& group : _groups) {
-        for (auto& e_id : group.elements_ids) {
+        for (auto& e_id : group.elements_ids()) {
             e_id = element_id_map[e_id];
         }
     }
@@ -203,11 +197,7 @@ void Reader::read_groups() {
 
         auto [group_elements, group_type] = read_group_elements(n_elements);
 
-        _groups.push_back(Group {
-            group_name,
-            group_type,
-            std::move(group_elements),
-        });
+        _groups.emplace_back(std::move(group_name), group_type, std::move(group_elements));
     }
 }
 
@@ -234,11 +224,7 @@ void Reader::read_dofs() {
             group_vertices.push_back(vertex_id_map[read_first_scalar(temp_line)]);
         }
 
-        _groups.push_back(Group {
-            group_name,
-            GroupType::Point,
-            std::move(group_vertices),
-        });
+        _groups.emplace_back(std::move(group_name), GroupType::Point, std::move(group_vertices));
     }
 }
 

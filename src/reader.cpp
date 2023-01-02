@@ -17,7 +17,8 @@ auto inline read_n_scalars(const std::string& line, std::size_t n) -> std::vecto
     auto views = split_to_views(std::string_view(line));
 
     for (std::size_t i = 0; i < n; ++i) {
-        scalars.push_back(std::stoul(views[i].data()));
+        auto str = std::string(views[i].data(), views[i].size());
+        scalars.push_back(std::stoul(str));
     }
     return scalars;
 }
@@ -30,7 +31,8 @@ auto inline read_n_scalars(const std::string_view line, std::size_t n) -> std::v
     auto views = split_to_views(line);
 
     for (std::size_t i = 0; i < n; ++i) {
-        scalars.push_back(std::stoul(views[i].data()));
+        auto str = std::string(views[i].data(), views[i].size());
+        scalars.push_back(std::stoul(str));
     }
     return scalars;
 }
@@ -120,11 +122,11 @@ void Reader::read_vertices() {
             throw std::runtime_error("Failed to read point coordinates");
         }
 
-        line_str_view = std::string_view(temp_line);
-
-        _vertices.push_back({std::stod(line_str_view.substr(0, 25).data()),
-                             std::stod(line_str_view.substr(25, 25).data()),
-                             std::stod(line_str_view.substr(50, 25).data())});
+        _vertices.push_back(std::array<double, 3> {
+            std::stod(temp_line.substr(0, 25)),
+            std::stod(temp_line.substr(25, 25)),
+            std::stod(temp_line.substr(50, 25)),
+        });
 
         vertex_id_map[point_unv_id] = current_point_id++;
     }

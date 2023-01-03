@@ -224,7 +224,7 @@ void Reader::read_dofs() {
             group_vertices.push_back(vertex_id_map[read_first_scalar(temp_line)]);
         }
 
-        _groups.emplace_back(std::move(group_name), GroupType::Point, std::move(group_vertices));
+        _groups.emplace_back(std::move(group_name), GroupType::Vertex, std::move(group_vertices));
     }
 }
 
@@ -281,7 +281,7 @@ template <typename T> auto Reader::read_group_elements_two_columns(std::size_t n
         current_element_number += 2;
     }
 
-    auto group_type = records[0] == 8 ? GroupType::Cell : GroupType::Point;
+    auto group_type = records[0] == 8 ? GroupType::Element : GroupType::Vertex;
 
     return std::make_pair(elements, group_type);
 }
@@ -293,7 +293,7 @@ template <typename T> auto Reader::read_group_elements_single_column() -> T {
 
     auto records = read_n_scalars(temp_line, 2);
     auto element = std::vector<std::size_t>({records[1]});
-    auto group_type = records[0] == 8 ? GroupType::Cell : GroupType::Point;
+    auto group_type = records[0] == 8 ? GroupType::Element : GroupType::Vertex;
 
     return std::make_pair(element, group_type);
 }

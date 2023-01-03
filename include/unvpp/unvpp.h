@@ -40,8 +40,8 @@ private:
 };
 
 enum class GroupType {
-    Point,
-    Cell,
+    Vertex,
+    Element,
 };
 
 struct Group {

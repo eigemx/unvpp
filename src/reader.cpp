@@ -110,13 +110,11 @@ void Reader::read_vertices() {
     std::size_t current_point_id {0};
 
     while (stream.read_line(temp_line)) {
-        auto line_str_view = std::string_view(temp_line);
-
-        if (is_separator(line_str_view)) {
+        if (is_separator(temp_line)) {
             break;
         }
 
-        auto point_unv_id = std::stoul(line_str_view.substr(0, 10).data());
+        auto point_unv_id = std::stoul(temp_line.substr(0, 10));
 
         if (!stream.read_line(temp_line)) {
             throw std::runtime_error("Failed to read point coordinates");

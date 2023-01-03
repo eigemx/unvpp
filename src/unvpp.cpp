@@ -1,3 +1,4 @@
+#include <iostream>
 #include <stdexcept>
 #include <unvpp/unvpp.h>
 
@@ -7,9 +8,26 @@
 
 namespace unv {
 
+auto is_crlf_and_not_windows(const std::filesystem::path& path) -> bool {
+#if !defined(_WIN32) && !defined(_WIN64)
+    auto st = std::ifstream {path, std::ios::in | std::ios::binary};
+    auto stream = FileStream(st);
+    auto line = std::string();
+    stream.read_line(line);
+    return line.back() == '\r';
+#endif
+
+    return false;
+}
+
 auto read(const std::filesystem::path& path) -> Mesh {
     if (!std::filesystem::exists(path)) {
         throw std::runtime_error("Input UNV mesh file does not exist!");
+    }
+
+    if (is_crlf_and_not_windows(path)) {
+        throw std::runtime_error(
+            "Input UNV mesh file has Windows line endings, please convert to UNIX line endings.");
     }
 
     auto st = std::ifstream(path);

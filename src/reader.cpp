@@ -1,8 +1,6 @@
 #include "reader.h"
 
 #include <cmath>
-#include <iostream>
-#include <unordered_map>
 
 namespace unv {
 
@@ -49,15 +47,15 @@ void Reader::read_tags() {
             read_units();
             break;
 
+        case TagType::Vertices:
+            read_vertices();
+            break;
+
         case TagType::Elements:
             read_elements();
 
             // adjust unv vertices index ordering for each element
             adjust_vertices_ids();
-            break;
-
-        case TagType::Vertices:
-            read_vertices();
             break;
 
         case TagType::Group:
@@ -117,7 +115,9 @@ void Reader::read_vertices() {
         auto point_unv_id = std::stoul(temp_line.substr(0, 10));
 
         if (!stream.read_line(temp_line)) {
-            throw std::runtime_error("Failed to read point coordinates");
+            std::string error_msg {"Failed to read point coordinates at line "};
+            error_msg += stream.line_number();
+            throw std::runtime_error(error_msg);
         }
 
         _vertices.push_back(std::array<double, 3> {

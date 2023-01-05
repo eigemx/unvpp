@@ -25,6 +25,22 @@ auto main(int argc, char* argv[]) -> int {
     std::cout << "Elements count = " << mesh.elements.value_or(std::vector<unv::Element>()).size()
               << std::endl;
 
+    // count elements of each type
+    std::vector<std::size_t> elements_count(6, 0);
+    for (auto& element : mesh.elements.value_or(std::vector<unv::Element>())) {
+        elements_count[static_cast<std::size_t>(element.type())]++;
+    }
+
+    if (mesh.elements.has_value()) {
+        std::cout << "Elements types count:" << std::endl;
+        std::cout << "- Lines: " << elements_count[0] << std::endl;
+        std::cout << "- Triangles: " << elements_count[1] << std::endl;
+        std::cout << "- Quadrangles: " << elements_count[2] << std::endl;
+        std::cout << "- Tetrahedrons: " << elements_count[3] << std::endl;
+        std::cout << "- Wedges: " << elements_count[4] << std::endl;
+        std::cout << "- Hexahedrons: " << elements_count[5] << std::endl;
+    }
+
     for (auto& group : mesh.groups.value_or(std::vector<unv::Group>())) {
         std::cout << "Group name: " << group.name()
                   << " - elements count = " << group.elements_ids().size() << std::endl;

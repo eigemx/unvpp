@@ -64,3 +64,6 @@ auto main() -> int {
 ```
 
 unvpp is designed to have a minimal interface, you can understand more about the various types included in `unv::Mesh` struct by simply inspecting `<unvpp/unvpp.h>` file!
+
+## Issues
+unvpp is under active development, please feel free to open an issue for any bugs or wrong behaviour

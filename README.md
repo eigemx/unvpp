@@ -32,7 +32,7 @@ auto main() -> int {
     std::cout << "Elements count = " << mesh.elements.value_or(std::vector<unv::Element>()).size()
             << std::endl;
 
-    // print group names and element count (like bounday patches or cell zones)
+    // print group names and element count (like boundary patches or cell zones)
     for (auto& group : mesh.groups.value_or(std::vector<unv::Group>())) {
         std::cout << "Group name: " << group.name << " - elements count = " << group.eIndices.size()
                 << std::endl;

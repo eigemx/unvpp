@@ -5,7 +5,30 @@
 
 A C++17 library for reading Ideas-UNV mesh format
 
-## Usage
+unvpp is designed as a parser for input UNV meshes for finite volume analysis. unvpp reads the following tags in UNV mesh files:
+
+- System of units tag 164
+- Nodes tag 2411 (vertices)
+- Elements tag 2412 (lines, quads, triangles, hexagons, tetrahedrons and wedges)
+- Groups tag 2452, 2467 and 757 (for boundary patches and cell zones)
+
+Other tags are ignored.
+
+## Get Started
+
+Clone the repository:
+
+```sh
+git clone --recursive https://github.com/eigemx/unvpp.git
+```
+
+Configure and build:
+
+```sh
+cd unvpp && mkdir build && cd build && cmake .. && make
+```
+
+### Tutorial
 ```cpp
 #include <unvpp/unvpp.h>
 #include <iostream>

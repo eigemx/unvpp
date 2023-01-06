@@ -26,6 +26,8 @@ SOFTWARE.
 #include <iomanip>
 #include <iostream>
 
+// ba
+
 #include <unvpp/unvpp.h>
 
 auto main(int argc, char* argv[]) -> int {
@@ -67,6 +69,10 @@ auto main(int argc, char* argv[]) -> int {
     for (auto& group : mesh.groups.value_or(std::vector<unv::Group>())) {
         std::cout << "Group name: " << group.name()
                   << " - elements count = " << group.elements_ids().size() << std::endl;
+
+        // count elements of each type in the group
+        std::cout << "Unique elements types count in group = "
+                  << group.unique_element_types().size() << std::endl;
     }
 
     std::cout << std::setprecision(20) << "Time of execution: " << duration.count()

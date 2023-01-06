@@ -222,6 +222,9 @@ void Reader::read_groups() {
         auto [group_elements, group_type] = read_group_elements(n_elements);
 
         _groups.emplace_back(std::move(group_name), group_type, std::move(group_elements));
+
+        auto& group = _groups.back();
+        set_group_unique_elements(group);
     }
 }
 
@@ -249,6 +252,14 @@ void Reader::read_dofs() {
         }
 
         _groups.emplace_back(std::move(group_name), GroupType::Vertex, std::move(group_vertices));
+        auto& group = _groups.back();
+        set_group_unique_elements(group);
+    }
+}
+
+void Reader::set_group_unique_elements(Group& group) {
+    for (auto& element_id : group.elements_ids()) {
+        group.add_element_type(_elements[element_id].type());
     }
 }
 

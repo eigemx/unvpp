@@ -27,6 +27,7 @@ SOFTWARE.
 #include <filesystem>
 #include <optional>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 namespace unv {
@@ -113,6 +114,10 @@ struct Group {
     auto inline name() -> std::string& { return _name; }
     auto inline type() -> GroupType { return _type; }
     auto inline elements_ids() -> std::vector<std::size_t>& { return _elements_ids; }
+    auto inline unique_element_types() const -> const std::unordered_set<ElementType>& {
+        return _unique_element_types;
+    }
+    void inline add_element_type(ElementType type) { _unique_element_types.insert(type); }
     [[nodiscard]] auto inline elements_ids() const -> const std::vector<std::size_t>& {
         return _elements_ids;
     }
@@ -121,6 +126,7 @@ private:
     std::string _name;
     GroupType _type;
     std::vector<std::size_t> _elements_ids;
+    std::unordered_set<ElementType> _unique_element_types;
 };
 
 /* UNV mesh data */

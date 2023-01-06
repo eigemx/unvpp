@@ -19,7 +19,7 @@ Other tags are ignored.
 Clone the repository:
 
 ```sh
-git clone --recursive https://github.com/eigemx/unvpp.git
+git clone https://github.com/eigemx/unvpp.git
 ```
 
 Configure and build:

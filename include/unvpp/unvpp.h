@@ -111,16 +111,19 @@ struct Group {
     Group(std::string&& name, GroupType type, std::vector<std::size_t>&& elements_ids)
         : _name(std::move(name)), _type(type), _elements_ids(std::move(elements_ids)) {}
 
-    auto inline name() -> std::string { return _name; }
-    auto inline type() -> GroupType { return _type; }
+    auto inline name() const -> std::string { return _name; }
+    auto inline type() const -> GroupType { return _type; }
+
     auto inline elements_ids() -> std::vector<std::size_t>& { return _elements_ids; }
+    [[nodiscard]] auto inline elements_ids() const -> const std::vector<std::size_t>& {
+        return _elements_ids;
+    }
+
     auto inline unique_element_types() const -> const std::unordered_set<ElementType>& {
         return _unique_element_types;
     }
     void inline add_element_type(ElementType type) { _unique_element_types.insert(type); }
-    [[nodiscard]] auto inline elements_ids() const -> const std::vector<std::size_t>& {
-        return _elements_ids;
-    }
+
 
 private:
     std::string _name;

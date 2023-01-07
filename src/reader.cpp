@@ -199,6 +199,8 @@ void Reader::adjust_elements_ids() {
         for (auto& e_id : group.elements_ids()) {
             e_id = element_id_map[e_id];
         }
+
+        set_group_unique_elements(group);
     }
 }
 
@@ -209,7 +211,7 @@ void Reader::read_groups() {
         }
 
         auto tokens = split(temp_line);
-        auto n_elements = std::stoi(tokens.back());
+        auto n_elements = std::stoul(tokens.back());
 
         // get group name
         if (!stream.read_line(temp_line)) {
@@ -224,7 +226,6 @@ void Reader::read_groups() {
         _groups.emplace_back(std::move(group_name), group_type, std::move(group_elements));
 
         auto& group = _groups.back();
-        set_group_unique_elements(group);
     }
 }
 
@@ -253,7 +254,6 @@ void Reader::read_dofs() {
 
         _groups.emplace_back(std::move(group_name), GroupType::Vertex, std::move(group_vertices));
         auto& group = _groups.back();
-        set_group_unique_elements(group);
     }
 }
 
@@ -298,11 +298,9 @@ template <typename T> auto Reader::read_group_elements_two_columns(std::size_t n
     // Warning: this causes a narrowing conversion from 'std::size_t' to 'double
     auto n_rows = static_cast<std::size_t>(n_elements / 2.0);
     std::vector<size_t> elements;
-    elements.resize(n_elements + 1);
+    elements.reserve(n_elements);
 
-    std::size_t current_element_number = 0;
-
-    std::vector<std::size_t> records;
+    auto group_type = GroupType::Element;
 
     for (std::size_t i = 0; i < n_rows; ++i) {
         if (!stream.read_line(temp_line)) {
@@ -310,13 +308,12 @@ template <typename T> auto Reader::read_group_elements_two_columns(std::size_t n
         }
 
         auto line_str_view = std::string_view(temp_line);
-        records = read_n_scalars(line_str_view, 6);
-        elements[current_element_number] = records[1];
-        elements[current_element_number + 1] = records[5];
-        current_element_number += 2;
-    }
+        auto records = read_n_scalars(line_str_view, 6);
+        elements.push_back(records[1]);
+        elements.push_back(records[5]);
 
-    auto group_type = records[0] == 8 ? GroupType::Element : GroupType::Vertex;
+        group_type = records[0] == 8 ? GroupType::Element : GroupType::Vertex;
+    }
 
     return std::make_pair(elements, group_type);
 }

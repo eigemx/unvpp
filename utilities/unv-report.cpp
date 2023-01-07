@@ -25,6 +25,7 @@ SOFTWARE.
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <map>
 
 // ba
 
@@ -73,6 +74,20 @@ auto main(int argc, char* argv[]) -> int {
                   // count elements of each type in the group
                   << " - unique elements types count in group = "
                   << group.unique_element_types().size() << std::endl;
+        // print the string representation of each element type in the group
+        // first make a map between the element type and its string representation and create the string representation of each element type
+        std::map<unv::ElementType, std::string> element_type_to_string;
+        element_type_to_string.insert({unv::ElementType::Line, "Line"});
+        element_type_to_string.insert({unv::ElementType::Triangle, "Triangle"});
+        element_type_to_string.insert({unv::ElementType::Quad, "Quadrangle"});
+        element_type_to_string.insert({unv::ElementType::Tetra, "Tetrahedron"});
+        element_type_to_string.insert({unv::ElementType::Wedge, "Wedge"});
+        element_type_to_string.insert({unv::ElementType::Hex, "Hexahedron"});
+
+        // print the different element types in the group
+        for (auto& element_type : group.unique_element_types()) {
+            std::cout << "   * " << element_type_to_string[element_type] << std::endl;
+        }
     }
 
     std::cout << std::setprecision(20) << "Time of execution: " << duration.count()

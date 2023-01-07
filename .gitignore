@@ -1,5 +1,5 @@
 build/
-meshes/
+test_meshes/
 .vscode/
 cylinderWithGroupsFine.unv
 format.txt

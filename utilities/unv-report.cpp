@@ -71,7 +71,7 @@ auto main(int argc, char* argv[]) -> int {
                   << " - elements count = " << group.elements_ids().size()
                   << '\n'
                   // count elements of each type in the group
-                  << "- Unique elements types count in group = "
+                  << " - unique elements types count in group = "
                   << group.unique_element_types().size() << std::endl;
     }
 

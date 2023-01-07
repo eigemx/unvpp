@@ -48,7 +48,7 @@ auto main(int argc, char* argv[]) -> int {
               << std::endl;
     std::cout << "Vertices count = " << mesh.vertices.size() << std::endl;
     std::cout << "Elements count = " << mesh.elements.value_or(std::vector<unv::Element>()).size()
-              << std::endl;
+              << "\n\n";
 
     // count elements of each type
     std::vector<std::size_t> elements_count(6, 0);
@@ -63,15 +63,15 @@ auto main(int argc, char* argv[]) -> int {
         std::cout << "- Quadrangles: " << elements_count[2] << std::endl;
         std::cout << "- Tetrahedrons: " << elements_count[3] << std::endl;
         std::cout << "- Wedges: " << elements_count[4] << std::endl;
-        std::cout << "- Hexahedrons: " << elements_count[5] << std::endl;
+        std::cout << "- Hexahedrons: " << elements_count[5] << '\n' << std::endl;
     }
 
     for (auto& group : mesh.groups.value_or(std::vector<unv::Group>())) {
-        std::cout << "Group name: " << group.name()
-                  << " - elements count = " << group.elements_ids().size() << std::endl;
-
-        // count elements of each type in the group
-        std::cout << "Unique elements types count in group = "
+        std::cout << "Group name: " << group.name() << '\n'
+                  << " - elements count = " << group.elements_ids().size()
+                  << '\n'
+                  // count elements of each type in the group
+                  << "- Unique elements types count in group = "
                   << group.unique_element_types().size() << std::endl;
     }
 

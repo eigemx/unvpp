@@ -82,7 +82,7 @@ struct Element {
     [[nodiscard]] auto inline vertices_ids() const -> const std::vector<std::size_t>& {
         return _vertices_ids;
     }
-    auto inline type() -> ElementType { return _type; }
+    [[nodiscard]] auto inline type() const -> ElementType { return _type; }
 
 private:
     std::vector<std::size_t> _vertices_ids;

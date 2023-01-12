@@ -201,7 +201,7 @@ inline auto split(const std::string& line) -> std::vector<std::string> {
 auto inline split_to_views(const std::string_view str) -> std::vector<std::string_view> {
     std::size_t i {0};
     std::size_t j {0};
-    std::size_t len = str.length();
+    std::size_t len {str.length()};
     std::vector<std::string_view> res;
     res.reserve(6);
 
@@ -209,7 +209,6 @@ auto inline split_to_views(const std::string_view str) -> std::vector<std::strin
     while (str[i] == ' ') {
         i++;
     }
-
     j = i;
 
     while (j < len) {
@@ -221,7 +220,6 @@ auto inline split_to_views(const std::string_view str) -> std::vector<std::strin
             while (str[j] == ' ') {
                 j++;
             }
-
             i = j;
         }
         j++;
@@ -230,7 +228,6 @@ auto inline split_to_views(const std::string_view str) -> std::vector<std::strin
     if (i != j) {
         res.emplace_back(std::string_view(str.data() + i, j - i));
     }
-
     return res;
 }
 
@@ -242,8 +239,6 @@ template <typename T> inline auto parse_number(std::string_view str) -> T {
     }
     return x;
 }
-
-} // namespace unv
 
 // https://stackoverflow.com/a/217605/2839539
 // trim from start (in place)
@@ -266,3 +261,5 @@ inline void trim(std::string& s) {
     ltrim(s);
     rtrim(s);
 }
+
+} // namespace unv

@@ -32,15 +32,18 @@ SOFTWARE.
 #include <unvpp/unvpp.h>
 
 auto main(int argc, char* argv[]) -> int {
-    if (argc < 2) {
+    // convert argv to vector of strings
+    std::vector<std::string> args(argv, argv + argc);
+
+    if (args.size() < 2) {
         std::cerr << "Too few args!" << std::endl;
-        std::cerr << "Usage: " << argv[0] << " [input]" << std::endl;
+        std::cerr << "Usage: " << args[0] << " [input]" << std::endl;
         return -1;
     }
 
     // measure time of execution
     auto start = std::chrono::high_resolution_clock::now();
-    auto mesh = unv::read(argv[1]);
+    auto mesh = unv::read(args[1]);
     auto end = std::chrono::high_resolution_clock::now();
 
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
@@ -69,13 +72,11 @@ auto main(int argc, char* argv[]) -> int {
 
     for (auto& group : mesh.groups.value_or(std::vector<unv::Group>())) {
         std::cout << "Group name: " << group.name() << '\n'
-                  << " - elements count = " << group.elements_ids().size()
-                  << '\n'
-                  // count elements of each type in the group
+                  << " - elements count = " << group.elements_ids().size() << '\n'
                   << " - unique elements types count in group = "
                   << group.unique_element_types().size() << std::endl;
+
         // print the string representation of each element type in the group
-        // first make a map between the element type and its string representation and create the string representation of each element type
         std::map<unv::ElementType, std::string> element_type_to_string;
         element_type_to_string.insert({unv::ElementType::Line, "Line"});
         element_type_to_string.insert({unv::ElementType::Triangle, "Triangle"});
@@ -85,7 +86,7 @@ auto main(int argc, char* argv[]) -> int {
         element_type_to_string.insert({unv::ElementType::Hex, "Hexahedron"});
 
         // print the different element types in the group
-        for (auto& element_type : group.unique_element_types()) {
+        for (const auto& element_type : group.unique_element_types()) {
             std::cout << "   * " << element_type_to_string[element_type] << std::endl;
         }
     }

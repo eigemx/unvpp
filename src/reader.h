@@ -65,7 +65,7 @@ private:
 
     void adjust_vertices_ids();
     void adjust_elements_ids();
-    void set_group_unique_elements(Group& group);
+    void set_group_unique_elements_types(Group& group);
 
     template <typename T = std::pair<std::vector<std::size_t>, GroupType>>
     auto read_group_elements(std::size_t n_elements) -> T;
@@ -84,7 +84,7 @@ private:
     std::vector<Element> _elements;
     std::vector<Group> _groups;
 
-    std::unordered_map<std::size_t, std::size_t> vertex_id_map;
-    std::unordered_map<std::size_t, std::size_t> element_id_map;
+    std::unordered_map<std::size_t, std::size_t> unv_vertex_id_to_sorted_id_map;
+    std::unordered_map<std::size_t, std::size_t> unv_element_id_to_sorted_id_map;
 };
 } // namespace unv

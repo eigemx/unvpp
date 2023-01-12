@@ -150,7 +150,7 @@ void Reader::read_vertices() {
             std::stod(temp_line.substr(50, 25)),
         });
 
-        vertex_id_map[point_unv_id] = current_point_id++;
+        unv_vertex_id_to_sorted_id_map[point_unv_id] = current_point_id++;
     }
 }
 
@@ -182,14 +182,14 @@ void Reader::read_elements() {
 
         _elements.emplace_back(std::move(vertices_ids), element_type);
 
-        element_id_map[element_unv_id] = current_element_id++;
+        unv_element_id_to_sorted_id_map[element_unv_id] = current_element_id++;
     }
 }
 
 void Reader::adjust_vertices_ids() {
     for (auto& element : _elements) {
         for (auto& v_id : element.vertices_ids()) {
-            v_id = vertex_id_map[v_id];
+            v_id = unv_vertex_id_to_sorted_id_map[v_id];
         }
     }
 }
@@ -197,10 +197,10 @@ void Reader::adjust_vertices_ids() {
 void Reader::adjust_elements_ids() {
     for (auto& group : _groups) {
         for (auto& e_id : group.elements_ids()) {
-            e_id = element_id_map[e_id];
+            e_id = unv_element_id_to_sorted_id_map[e_id];
         }
 
-        set_group_unique_elements(group);
+        set_group_unique_elements_types(group);
     }
 }
 
@@ -210,17 +210,16 @@ void Reader::read_groups() {
             break;
         }
 
-        auto tokens = split(temp_line);
-        auto n_elements = std::stoul(tokens.back());
+        auto tokens = split_to_views(temp_line);
+        auto n_elements = std::stoul(std::string(tokens.back().data(), tokens.back().size()));
 
         // get group name
         if (!stream.read_line(temp_line)) {
             throw std::runtime_error("Failed to read group name");
         }
 
-        auto group_name = split(temp_line).at(0);
-        trim(group_name);
-
+        auto group_name_view = split_to_views(temp_line).at(0);
+        auto group_name = std::string(group_name_view.data(), group_name_view.size());
         auto [group_elements, group_type] = read_group_elements(n_elements);
 
         _groups.emplace_back(std::move(group_name), group_type, std::move(group_elements));
@@ -240,8 +239,8 @@ void Reader::read_dofs() {
             throw std::runtime_error("Failed to read group name in DOFs tag");
         }
 
-        auto group_name = split(temp_line).at(0);
-        trim(group_name);
+        auto group_name_view = split_to_views(temp_line).at(0);
+        auto group_name = std::string(group_name_view);
 
         std::vector<std::size_t> group_vertices;
 
@@ -249,7 +248,7 @@ void Reader::read_dofs() {
             if (is_separator(temp_line)) {
                 break;
             }
-            group_vertices.push_back(vertex_id_map[read_first_scalar(temp_line)]);
+            group_vertices.push_back(unv_vertex_id_to_sorted_id_map[read_first_scalar(temp_line)]);
         }
 
         _groups.emplace_back(std::move(group_name), GroupType::Vertex, std::move(group_vertices));
@@ -257,7 +256,7 @@ void Reader::read_dofs() {
     }
 }
 
-void Reader::set_group_unique_elements(Group& group) {
+void Reader::set_group_unique_elements_types(Group& group) {
     for (auto& element_id : group.elements_ids()) {
         group.add_element_type(_elements[element_id].type());
     }

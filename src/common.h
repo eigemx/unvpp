@@ -25,10 +25,7 @@ SOFTWARE.
 
 #include <algorithm>
 #include <array>
-#include <cctype>
 #include <charconv>
-#include <initializer_list>
-#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -39,10 +36,8 @@ SOFTWARE.
 #include "stream.h"
 
 namespace unv {
-auto vertices_count_from_element_id(std::size_t unv_element_id) -> std::size_t;
-auto element_type_from_element_id(std::size_t unv_element_id) -> ElementType;
 
-const std::vector<std::string> unv_units_codes = {
+const std::array<std::string, 11> unv_units_codes = {
     "Unknown",                // 0
     "SI: Meter (newton)",     // 1
     "BG: Foot (pound f)",     // 2
@@ -57,12 +52,12 @@ const std::vector<std::string> unv_units_codes = {
 };
 
 // supported unv tags strings
-const auto SEPARATOR = "    -1";
-const auto UNITS_TAG = "   164";
-const auto VERTICES_TAG = "  2411";
-const auto ELEMENTS_TAG = "  2412";
-const auto DOFS_TAG = "   757";
-const std::array<std::string, 2> GROUP_TAGS = {"  2452", "  2467"};
+const auto SEPARATOR {"    -1"};
+const auto UNITS_TAG {"   164"};
+const auto VERTICES_TAG {"  2411"};
+const auto ELEMENTS_TAG {"  2412"};
+const auto DOFS_TAG {"   757"};
+const std::array<std::string, 2> GROUP_TAGS {"  2452", "  2467"};
 
 enum class TagType {
     Separator,
@@ -102,8 +97,8 @@ inline auto tag_type_from_string(const std::string& tag) -> TagType {
 }
 
 // group types
-const auto POINT_GROUP = "7";
-const auto ELEMENT_GROUP = "8";
+const auto POINT_GROUP {"7"};
+const auto ELEMENT_GROUP {"8"};
 
 inline auto vertices_count_from_element_id(std::size_t unv_element_id) -> std::size_t {
     switch (unv_element_id) {
@@ -181,21 +176,6 @@ inline auto is_beam_type(ElementType element_type) -> bool {
     return element_type == ElementType::Line;
 }
 
-inline auto split(const std::string& line) -> std::vector<std::string> {
-    std::vector<std::string> result;
-    result.reserve(10);
-
-    std::stringstream ss(line);
-    std::string item;
-
-    while (std::getline(ss, item, ' ')) {
-        if (!item.empty()) {
-            result.push_back(item);
-        }
-    }
-    return result;
-}
-
 // Careful!
 // this is buggy if there are trailing whitespace in input string
 auto inline split_to_views(const std::string_view str) -> std::vector<std::string_view> {
@@ -238,28 +218,6 @@ template <typename T> inline auto parse_number(std::string_view str) -> T {
         throw std::runtime_error("error while parsing numbers");
     }
     return x;
-}
-
-// https://stackoverflow.com/a/217605/2839539
-// trim from start (in place)
-inline void ltrim(std::string& s) {
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
-                return !static_cast<bool>(std::isspace(ch));
-            }));
-}
-
-// trim from end (in place)
-inline void rtrim(std::string& s) {
-    s.erase(std::find_if(s.rbegin(), s.rend(),
-                         [](unsigned char ch) { return !static_cast<bool>(std::isspace(ch)); })
-                .base(),
-            s.end());
-}
-
-// trim from both ends (in place)
-inline void trim(std::string& s) {
-    ltrim(s);
-    rtrim(s);
 }
 
 } // namespace unv

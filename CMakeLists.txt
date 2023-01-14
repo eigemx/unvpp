@@ -9,7 +9,6 @@ project (
 set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
 
 # check if unvpp is compiled as the main project
 set(UNVPP_MAIN_PROJECT OFF)

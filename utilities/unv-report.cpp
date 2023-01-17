@@ -70,6 +70,8 @@ auto main(int argc, char* argv[]) -> int {
         std::cout << "- Hexahedrons: " << elements_count[5] << '\n' << std::endl;
     }
 
+    std::cout << "Number of boundary faces = " << mesh.n_boundary_faces << "\n\n";
+
     for (auto& group : mesh.groups.value_or(std::vector<unv::Group>())) {
         std::cout << "Group name: " << group.name() << '\n'
                   << " - elements count = " << group.elements_ids().size() << '\n'

@@ -141,11 +141,13 @@ struct Mesh {
      * @param vertices a vector of vertices coordinates
      * @param elements an optional vector of elements (if any)
      * @param groups an optional vector of groups (if any)
+     * @param n_boundary_faces number of boundary faces
      */
-    std::optional<UnitsSystem> units_system;
+    std::optional<UnitsSystem> units_system {std::nullopt};
     std::vector<std::array<double, 3>> vertices;
-    std::optional<std::vector<Element>> elements;
-    std::optional<std::vector<Group>> groups;
+    std::optional<std::vector<Element>> elements {std::nullopt};
+    std::optional<std::vector<Group>> groups {std::nullopt};
+    std::size_t n_boundary_faces {0};
 };
 
 /**

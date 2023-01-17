@@ -56,7 +56,6 @@ public:
     auto vertices() -> std::vector<std::array<double, 3>>&;
     auto elements() -> std::vector<Element>&;
     auto groups() -> std::vector<Group>&;
-    auto n_boundary_faces() const -> std::size_t { return _n_boundary_faces; }
 
 private:
     inline void skip_tag() {
@@ -87,7 +86,5 @@ private:
 
     std::unordered_map<std::size_t, std::size_t> unv_vertex_id_to_sorted_id_map;
     std::unordered_map<std::size_t, std::size_t> unv_element_id_to_sorted_id_map;
-
-    std::size_t _n_boundary_faces {0};
 };
 } // namespace unv

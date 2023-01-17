@@ -147,7 +147,6 @@ struct Mesh {
     std::vector<std::array<double, 3>> vertices;
     std::optional<std::vector<Element>> elements {std::nullopt};
     std::optional<std::vector<Group>> groups {std::nullopt};
-    std::size_t n_boundary_faces {0};
 };
 
 /**

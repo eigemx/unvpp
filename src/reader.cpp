@@ -28,10 +28,6 @@ SOFTWARE.
 
 namespace unv {
 
-auto inline is_2d_face(ElementType type) -> bool {
-    return type == ElementType::Triangle || type == ElementType::Quad;
-}
-
 auto inline read_first_scalar(const std::string& line) -> std::size_t {
     return std::stoul(line);
 }
@@ -172,11 +168,6 @@ void Reader::read_elements() {
 
         auto element_unv_id = records[0];
         auto element_type = element_type_from_element_id(records[1]);
-
-        if (is_2d_face(element_type)) {
-            ++_n_boundary_faces;
-        }
-
         auto vertex_count = records[5];
 
         stream.read_line(temp_line);

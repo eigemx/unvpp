@@ -65,7 +65,6 @@ auto read(const std::filesystem::path& path) -> Mesh {
         !reader.elements().empty() ? std::optional(std::move(reader.elements())) : std::nullopt;
     mesh.groups =
         !reader.groups().empty() ? std::optional(std::move(reader.groups())) : std::nullopt;
-    mesh.n_boundary_faces = reader.n_boundary_faces();
 
     return mesh;
 }

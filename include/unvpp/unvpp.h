@@ -135,13 +135,12 @@ private:
 /* UNV mesh data */
 struct Mesh {
     /**
-     * @brief UNV Mesh object
+     * @brief UNV mesh object
      * 
      * @param units_system an optional units system of the mesh
      * @param vertices a vector of vertices coordinates
      * @param elements an optional vector of elements (if any)
      * @param groups an optional vector of groups (if any)
-     * @param n_boundary_faces number of boundary faces
      */
     std::optional<UnitsSystem> units_system {std::nullopt};
     std::vector<std::array<double, 3>> vertices;

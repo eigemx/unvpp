@@ -75,14 +75,14 @@ struct Element {
      * @param v a vector of vertices ids defining the element
      * @param type type of the element
      */
-    Element(std::vector<std::size_t>&& v, ElementType type)
+    Element(std::vector<std::size_t>&& v, ElementType type) noexcept
         : _vertices_ids(std::move(v)), _type(type) {}
 
-    auto inline vertices_ids() -> std::vector<std::size_t>& { return _vertices_ids; }
-    [[nodiscard]] auto inline vertices_ids() const -> const std::vector<std::size_t>& {
+    auto inline vertices_ids() noexcept -> std::vector<std::size_t>& { return _vertices_ids; }
+    [[nodiscard]] auto inline vertices_ids() const noexcept -> const std::vector<std::size_t>& {
         return _vertices_ids;
     }
-    [[nodiscard]] auto inline type() const -> ElementType { return _type; }
+    [[nodiscard]] auto inline type() const noexcept -> ElementType { return _type; }
 
 private:
     std::vector<std::size_t> _vertices_ids;

@@ -45,21 +45,33 @@ auto main() -> int {
 
 
     // print string representation of the mesh system of units
-    std::cout << "Units system: " << mesh.unitsSystem.value_or(unv::UnitsSystem()).repr
-            << std::endl;
+    // if the mesh does not have a system of units, 
+    // print the default "repr" representation string "Unknown".
+    // Check definition of UnitsSystem in unvpp/unvpp.h file
+    std::cout << "Units system: " 
+              << mesh.unitsSystem.value_or(unv::UnitsSystem()).repr
+              << std::endl;
 
     // print count of mesh vertices
-    std::cout << "Vertices count = " << mesh.vertices.size() << std::endl;
+    std::cout << "Vertices count = " 
+              << mesh.vertices.size() 
+              << std::endl;
 
     // print count of mesh elements (cells)
-    std::cout << "Elements count = " << mesh.elements.value_or(std::vector<unv::Element>()).size()
-            << std::endl;
+    std::cout << "Elements count = " 
+              << mesh.elements.value_or(std::vector<unv::Element>()).size()
+              << std::endl;
 
     // print group names and element count (like boundary patches or cell zones)
     for (auto& group : mesh.groups.value_or(std::vector<unv::Group>())) {
-        std::cout << "Group name: " << group.name << " - elements count = " << group.eIndices.size()
-                << std::endl;
+        std::cout << "Group name: " 
+                  << group.name 
+                  << " - elements count = " 
+                  << group.eIndices.size()
+                  << std::endl;
     }
+
+    return 0;
 }
 ```
 

@@ -27,8 +27,6 @@ SOFTWARE.
 #include <iostream>
 #include <map>
 
-// ba
-
 #include <unvpp/unvpp.h>
 
 auto main(int argc, char* argv[]) -> int {

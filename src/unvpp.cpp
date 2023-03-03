@@ -48,6 +48,11 @@ auto read(const std::filesystem::path& path) -> Mesh {
         throw std::runtime_error("Input UNV mesh file does not exist!");
     }
 
+    // check if input is not a file
+    if (!std::filesystem::is_regular_file(path)) {
+        throw std::runtime_error("Input UNV mesh file is not a regular file!");
+    }
+
     if (is_crlf_and_not_windows(path)) {
         throw std::runtime_error(
             "Input UNV mesh file has Windows line endings, please convert to UNIX line endings.");

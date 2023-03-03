@@ -32,8 +32,8 @@ SOFTWARE.
 
 namespace unv {
 
-auto static read_first_scalar(const std::string& line) -> std::size_t;
-auto static read_n_scalars(const std::string& line, std::size_t n) -> std::vector<std::size_t>;
+auto read_first_scalar(const std::string& line) -> std::size_t;
+auto read_n_scalars(const std::string& line, std::size_t n) -> std::vector<std::size_t>;
 
 class Reader {
 public:

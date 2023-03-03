@@ -75,7 +75,7 @@ struct Element {
      * @param v a vector of vertices ids defining the element
      * @param type type of the element
      */
-    Element(std::vector<std::size_t>&& v, ElementType type) noexcept
+    Element(std::vector<std::size_t> v, ElementType type) noexcept
         : _vertices_ids(std::move(v)), _type(type) {}
 
     auto inline vertices_ids() noexcept -> std::vector<std::size_t>& { return _vertices_ids; }
@@ -108,7 +108,7 @@ struct Group {
      * @param type type of the group
      * @param elements_ids a vector of elements ids defining the group
      */
-    Group(std::string&& name, GroupType type, std::vector<std::size_t>&& elements_ids)
+    Group(std::string name, GroupType type, std::vector<std::size_t> elements_ids)
         : _name(std::move(name)), _type(type), _elements_ids(std::move(elements_ids)) {}
 
     auto inline name() const -> std::string { return _name; }

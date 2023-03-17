@@ -46,11 +46,6 @@ public:
     ~Reader() { stream.~FileStream(); }
 
     void read_tags();
-    void read_units();
-    void read_vertices();
-    void read_elements();
-    void read_groups();
-    void read_dofs();
 
     auto units() -> UnitsSystem&;
     auto vertices() -> std::vector<std::array<double, 3>>&;
@@ -63,6 +58,11 @@ private:
         }
     }
 
+    void read_units();
+    void read_vertices();
+    void read_elements();
+    void read_groups();
+    void read_dofs();
     void adjust_vertices_ids();
     void adjust_elements_ids();
     void set_group_unique_elements_types(Group& group);

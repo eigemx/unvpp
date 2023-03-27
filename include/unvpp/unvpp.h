@@ -79,10 +79,10 @@ struct Element {
         : _vertices_ids(std::move(v)), _type(type) {}
 
     auto inline vertices_ids() noexcept -> std::vector<std::size_t>& { return _vertices_ids; }
-    [[nodiscard]] auto inline vertices_ids() const noexcept -> const std::vector<std::size_t>& {
+    auto inline vertices_ids() const noexcept -> const std::vector<std::size_t>& {
         return _vertices_ids;
     }
-    [[nodiscard]] auto inline type() const noexcept -> ElementType { return _type; }
+    auto inline type() const noexcept -> ElementType { return _type; }
 
 private:
     std::vector<std::size_t> _vertices_ids;
@@ -115,9 +115,7 @@ struct Group {
     auto inline type() const -> GroupType { return _type; }
 
     auto inline elements_ids() -> std::vector<std::size_t>& { return _elements_ids; }
-    [[nodiscard]] auto inline elements_ids() const -> const std::vector<std::size_t>& {
-        return _elements_ids;
-    }
+    auto inline elements_ids() const -> const std::vector<std::size_t>& { return _elements_ids; }
 
     auto inline unique_element_types() const -> const std::unordered_set<ElementType>& {
         return _unique_element_types;

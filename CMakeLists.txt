@@ -29,5 +29,10 @@ add_subdirectory(src)
 
 if (${UNVPP_MAIN_PROJECT})
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+    
+    # set output directories
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+
     add_subdirectory(utilities)
 endif()

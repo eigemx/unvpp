@@ -32,7 +32,7 @@ namespace unv {
 class FileStream {
 public:
     FileStream(std::ifstream& fstream) : file_stream(&fstream) {}
-    [[nodiscard]] auto inline line_number() const -> std::size_t { return _line_number; }
+    auto inline line_number() const -> std::size_t { return _line_number; }
 
     FileStream() = delete;
     FileStream(FileStream& other) = delete;

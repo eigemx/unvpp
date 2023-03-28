@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
+include(FetchContent)
+
 project (
   Unvpp VERSION 1.0.0 
   DESCRIPTION "Ideas-UNV Mesh Parsing Library"
@@ -14,6 +16,14 @@ set(UNVPP_MAIN_PROJECT OFF)
 if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     set(UNVPP_MAIN_PROJECT ON)
 endif()
+
+FetchContent_Declare(
+  fast_float
+  GIT_REPOSITORY https://github.com/lemire/fast_float.git
+  GIT_TAG tags/v1.1.2
+  GIT_SHALLOW TRUE)
+
+FetchContent_MakeAvailable(fast_float)
 
 add_subdirectory(src)
 

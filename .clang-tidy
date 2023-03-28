@@ -1,4 +1,5 @@
 Checks: '-*,modernize-*, readability-*, performance-*, misc-*, cppcoreguidelines-*,
+         -cppcoreguidelines-pro-bounds-constant-array-index,
          -modernize-use-nodiscard,
          -readability-magic-numbers, -cppcoreguidelines-avoid-magic-numbers, -cppcoreguidelines-narrowing-conversions'
 WarningsAsErrors: '*'

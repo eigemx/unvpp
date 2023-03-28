@@ -35,12 +35,12 @@ namespace unv {
 class Reader {
 public:
     Reader() = delete;
-    Reader(FileStream& stream) : stream(stream) {};
+    Reader(FileStream& stream) : _stream(stream) {};
     Reader(Reader& other) = delete;
     Reader(Reader&& other) = delete;
     auto operator=(Reader& other) -> Reader& = delete;
     auto operator=(Reader&& other) -> Reader& = delete;
-    ~Reader() { stream.~FileStream(); }
+    ~Reader() { _stream.~FileStream(); }
 
     void read_tags();
 
@@ -51,7 +51,7 @@ public:
 
 private:
     inline void skip_tag() {
-        while (stream.read_line(temp_line) && !is_separator(temp_line)) {
+        while (_stream.read_line(_temp_line) && !is_separator(_temp_line)) {
         }
     }
 
@@ -73,15 +73,16 @@ private:
     template <typename T = std::pair<std::vector<std::size_t>, GroupType>>
     auto read_group_elements_single_column() -> T;
 
-    FileStream& stream;
-    std::string temp_line;
+    FileStream& _stream;
+    std::string _temp_line;
+    std::string_view _temp_line_view;
 
     UnitsSystem units_system;
     std::vector<std::array<double, 3>> _vertices;
     std::vector<Element> _elements;
     std::vector<Group> _groups;
 
-    std::unordered_map<std::size_t, std::size_t> unv_vertex_id_to_sorted_id_map;
-    std::unordered_map<std::size_t, std::size_t> unv_element_id_to_sorted_id_map;
+    std::unordered_map<std::size_t, std::size_t> _unv_vertex_id_to_ordered_id_map;
+    std::unordered_map<std::size_t, std::size_t> _unv_element_id_to_ordered_id_map;
 };
 } // namespace unv

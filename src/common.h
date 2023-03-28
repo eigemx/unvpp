@@ -25,7 +25,6 @@ SOFTWARE.
 
 #include <algorithm>
 #include <array>
-#include <charconv>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -69,7 +68,7 @@ enum class TagType {
     Unsupported,
 };
 
-inline auto tag_type_from_string(const std::string& tag) -> TagType {
+inline auto tag_type_from_string(std::string_view tag) -> TagType {
     if (tag == SEPARATOR) {
         return TagType::Separator;
     }
@@ -164,10 +163,6 @@ inline auto element_type_from_element_id(std::size_t unv_element_id) -> ElementT
     }
 }
 
-inline auto is_separator(const std::string& line) -> bool {
-    return line.substr(0, 6) == SEPARATOR;
-}
-
 inline auto is_separator(const std::string_view line) -> bool {
     return line.substr(0, 6) == SEPARATOR;
 }
@@ -178,6 +173,7 @@ inline auto is_beam_type(ElementType element_type) -> bool {
 
 // Careful!
 // this is buggy if there are trailing whitespace in input string
+// TODO: fix this
 auto inline split_to_views(const std::string_view str) -> std::vector<std::string_view> {
     std::size_t i {0};
     std::size_t j {0};
@@ -209,15 +205,6 @@ auto inline split_to_views(const std::string_view str) -> std::vector<std::strin
         res.emplace_back(std::string_view(str.data() + i, j - i));
     }
     return res;
-}
-
-template <typename T> inline auto parse_number(std::string_view str) -> T {
-    T x;
-    auto [p, ec] = std::from_chars(str.data(), str.data() + str.size(), x);
-    if (p == str.data()) {
-        throw std::runtime_error("error while parsing numbers");
-    }
-    return x;
 }
 
 } // namespace unv

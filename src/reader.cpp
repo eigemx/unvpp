@@ -355,8 +355,12 @@ void Reader::read_groups() {
             throw std::runtime_error("Failed to read group name");
         }
 
-        auto group_name_view = split_to_views(_temp_line).at(0);
-        auto group_name = std::string(group_name_view.data(), group_name_view.size());
+        // read group name
+        auto group_name_start = _temp_line.find_first_not_of(' ');
+        auto group_name_end = _temp_line.find_last_not_of(' ');
+        auto group_name =
+            _temp_line.substr(group_name_start, group_name_end - group_name_start + 1);
+
         auto [group_elements, group_type] = read_group_elements(n_elements);
 
         _groups.emplace_back(std::move(group_name), group_type, std::move(group_elements));
@@ -378,8 +382,11 @@ void Reader::read_dofs() {
             throw std::runtime_error("Failed to read group name in DOFs tag");
         }
 
-        auto group_name_view = split_to_views(_temp_line).at(0);
-        auto group_name = std::string(group_name_view);
+        // read group name
+        auto group_name_start = _temp_line.find_first_not_of(' ');
+        auto group_name_end = _temp_line.find_last_not_of(' ');
+        auto group_name =
+            _temp_line.substr(group_name_start, group_name_end - group_name_start + 1);
 
         std::vector<std::size_t> group_vertices;
 

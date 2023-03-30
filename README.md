@@ -3,7 +3,7 @@
 [![cmake-linux](https://github.com/eigenemara/unvpp/actions/workflows/cmake-linux.yml/badge.svg)](https://github.com/eigenemara/unvpp/actions/workflows/cmake-linux.yml)
 [![cmake-windows](https://github.com/eigenemara/unvpp/actions/workflows/cmake-windows.yml/badge.svg)](https://github.com/eigenemara/unvpp/actions/workflows/cmake-windows.yml)
 
-A zero dependency (except STL) C++17 library for reading Ideas-UNV mesh format.
+A C++17 library for reading Ideas-UNV mesh format.
 
 unvpp is designed as a parser for input UNV meshes for finite volume analysis. unvpp reads the following tags in `.unv` mesh files:
 

@@ -33,6 +33,13 @@ if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     set(UNVPP_MAIN_PROJECT ON)
 endif()
 
+
+# turn off assertions in release build
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    add_compile_definitions(NDEBUG)
+endif()
+
+
 FetchContent_Declare(
   fast_float
   GIT_REPOSITORY https://github.com/lemire/fast_float.git

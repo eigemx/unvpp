@@ -25,6 +25,7 @@ SOFTWARE.
 
 #include <algorithm>
 #include <array>
+#include <map>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -33,6 +34,9 @@ SOFTWARE.
 #include <unvpp/unvpp.h>
 
 #include "stream.h"
+
+
+using std::string_view_literals::operator""sv;
 
 namespace unv {
 
@@ -51,14 +55,19 @@ const std::array<std::string, 11> unv_units_codes = {
 };
 
 // supported unv tags strings
-const auto SEPARATOR {"    -1"};
-const auto UNITS_TAG {"   164"};
-const auto VERTICES_TAG {"  2411"};
-const auto ELEMENTS_TAG {"  2412"};
-const auto DOFS_TAG {"   757"};
-const std::array<std::string, 2> GROUP_TAGS {"  2452", "  2467"};
+constexpr auto SEPARATOR {"    -1"sv};
+constexpr auto UNITS_TAG {"   164"sv};
+constexpr auto VERTICES_TAG {"  2411"sv};
+constexpr auto ELEMENTS_TAG {"  2412"sv};
+constexpr auto DOFS_TAG {"   757"sv};
+constexpr std::array<std::string_view, 2> GROUP_TAGS {"  2452"sv, "  2467"sv};
 
-enum class TagType {
+// group types
+constexpr auto POINT_GROUP {"7"sv};
+constexpr auto ELEMENT_GROUP {"8"sv};
+
+
+enum class TagKind {
     Separator,
     Units,
     Vertices,
@@ -68,36 +77,23 @@ enum class TagType {
     Unsupported,
 };
 
-inline auto tag_type_from_string(std::string_view tag) -> TagType {
-    if (tag == SEPARATOR) {
-        return TagType::Separator;
-    }
-    if (tag == UNITS_TAG) {
-        return TagType::Units;
+
+inline auto tag_kind_from_str(std::string_view tag) -> TagKind {
+    static const std::map<std::string_view, TagKind> tag_kind_map = {
+        {SEPARATOR, TagKind::Separator},   {UNITS_TAG, TagKind::Units},
+        {ELEMENTS_TAG, TagKind::Elements}, {VERTICES_TAG, TagKind::Vertices},
+        {DOFS_TAG, TagKind::DOFs},         {GROUP_TAGS[0], TagKind::Group},
+        {GROUP_TAGS[1], TagKind::Group},
+    };
+
+    auto it = tag_kind_map.find(tag);
+    if (it != tag_kind_map.end()) {
+        return it->second;
     }
 
-    if (tag == ELEMENTS_TAG) {
-        return TagType::Elements;
-    }
-
-    if (tag == VERTICES_TAG) {
-        return TagType::Vertices;
-    }
-
-    if (tag == DOFS_TAG) {
-        return TagType::DOFs;
-    }
-
-    if (tag == GROUP_TAGS[0] || tag == GROUP_TAGS[1]) {
-        return TagType::Group;
-    }
-
-    return TagType::Unsupported;
+    return TagKind::Unsupported;
 }
 
-// group types
-const auto POINT_GROUP {"7"};
-const auto ELEMENT_GROUP {"8"};
 
 inline auto vertices_count_from_element_id(std::size_t unv_element_id) -> std::size_t {
     switch (unv_element_id) {
@@ -131,6 +127,7 @@ inline auto vertices_count_from_element_id(std::size_t unv_element_id) -> std::s
     }
 }
 
+
 inline auto element_type_from_element_id(std::size_t unv_element_id) -> ElementType {
     switch (unv_element_id) {
     case 11:
@@ -159,7 +156,8 @@ inline auto element_type_from_element_id(std::size_t unv_element_id) -> ElementT
         return ElementType::Hex;
     default:
         // throw exception for unknown element_type
-        throw std::runtime_error("Unknown element type id");
+        throw std::runtime_error(std::string("unv::element_type_from_element_id(): ") +
+                                 "Unknown element type id " + std::to_string(unv_element_id));
     }
 }
 

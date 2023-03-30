@@ -202,30 +202,30 @@ void Reader::read_tags() {
             continue;
         }
 
-        switch (tag_type_from_string(_temp_line_view)) {
-        case TagType::Units:
+        switch (tag_kind_from_str(_temp_line_view)) {
+        case TagKind::Units:
             read_units();
             break;
 
-        case TagType::Vertices:
+        case TagKind::Vertices:
             read_vertices();
             break;
 
-        case TagType::Elements:
+        case TagKind::Elements:
             read_elements();
 
             // adjust unv vertices index ordering for each element
             adjust_vertices_ids();
             break;
 
-        case TagType::Group:
+        case TagKind::Group:
             read_groups();
 
             // adjust unv elements index ordering for each group
             adjust_elements_ids();
             break;
 
-        case TagType::DOFs:
+        case TagKind::DOFs:
             read_dofs();
             break;
 

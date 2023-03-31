@@ -25,7 +25,6 @@ SOFTWARE.
 
 #include "common.h"
 #include "stream.h"
-#include <sstream>
 #include <unordered_map>
 #include <utility>
 
@@ -69,11 +68,9 @@ private:
     void read_groups();
     void read_dofs();
     void adjust_vertices_ids();
-    void adjust_elements_ids();
-    void set_group_unique_elements_types(Group& group);
+    void adjust_group_elements();
 
     using GroupDataPair = std::pair<std::vector<std::size_t>, GroupType>;
-
     auto read_group_elements(std::size_t n_elements) -> GroupDataPair;
     auto read_group_elements_two_columns(std::size_t n_elements) -> GroupDataPair;
     auto read_group_elements_single_column() -> GroupDataPair;

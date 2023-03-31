@@ -31,6 +31,16 @@ SOFTWARE.
 namespace unvpp {
 
 auto inline read_double_triplet(std::string_view line) -> std::array<double, 3> {
+    /**
+     * @brief Read a triplet of double values from a line.
+     * 
+     * 
+     * @param line The line to read from.
+     * @return std::array<double, 3> The triplet of values.
+     * @throw std::runtime_error If the line does not contain a triplet of values.
+     * @throw std::runtime_error If the line contains a value that cannot be parsed.
+     * 
+     */
     std::array<double, 3> numbers {};
 
     auto start = line.find_first_not_of(' ');
@@ -74,6 +84,17 @@ auto inline read_double_triplet(std::string_view line) -> std::array<double, 3> 
 }
 
 auto inline read_n_scalars(std::string_view line, std::size_t n) -> std::vector<std::size_t> {
+    /**
+     * @brief Read n scalar values from a line.
+     * 
+     * 
+     * @param line The line to read from.
+     * @param n The number of values to read.
+     * @return std::vector<std::size_t> The values.
+     * @throw std::runtime_error If the line does not at least contain n values.
+     * @throw std::runtime_error If the line contains a value that cannot be parsed.
+     * 
+     */
     std::vector<std::size_t> numbers;
     numbers.reserve(n);
 
@@ -117,6 +138,16 @@ auto inline read_n_scalars(std::string_view line, std::size_t n) -> std::vector<
 }
 
 auto inline read_first_scalar(std::string_view line) -> std::size_t {
+    /**
+     * @brief Read the first scalar value from a line.
+     * 
+     * 
+     * @param line The line to read from.
+     * @return std::size_t The value.
+     * @throw std::runtime_error If the line does not contain a value.
+     * @throw std::runtime_error If the line contains a value that cannot be parsed.
+     * 
+     */
     auto start = line.find_first_not_of(' ');
     if (start == std::string_view::npos) {
         throw std::runtime_error("read_first_scalar(): No number found in line");
@@ -135,6 +166,16 @@ auto inline read_first_scalar(std::string_view line) -> std::size_t {
 }
 
 auto inline read_first_double(std::string_view line) -> double {
+    /**
+     * @brief Read the first double value from a line.
+     * 
+     * 
+     * @param line The line to read from.
+     * @return double The value.
+     * @throw std::runtime_error If the line does not contain a value.
+     * @throw std::runtime_error If the line contains a value that cannot be parsed.
+     * 
+     */
     auto start = line.find_first_not_of(' ');
     if (start == std::string_view::npos) {
         throw std::runtime_error("read_first_double(): No number found in line");
@@ -153,6 +194,18 @@ auto inline read_first_double(std::string_view line) -> double {
 }
 
 auto inline read_nth_scalar(std::string_view line, std::size_t n) -> std::size_t {
+    /**
+     * @brief Read the nth scalar value from a line.
+     * 
+     * 
+     * @param line The line to read from.
+     * @param n The index of the value to read.
+     * @return std::size_t The value.
+     * @throw std::runtime_error If the line does not contain a value.
+     * @throw std::runtime_error If the line contains scalars less than n.
+     * @throw std::runtime_error If the line contains a value that cannot be parsed.
+     * 
+     */
     auto start = line.find_first_not_of(' ');
 
     if (start == std::string_view::npos) {
@@ -195,6 +248,13 @@ auto inline read_nth_scalar(std::string_view line, std::size_t n) -> std::size_t
 
 
 void Reader::read_tags() {
+    /**
+     * @brief Read the tags from the stream.
+     * 
+     * 
+     * @throw std::runtime_error If the stream does not contain a valid unv file.
+     * 
+     */
     while (_stream.read_line(_temp_line)) {
         _temp_line_view = _temp_line;
 
@@ -222,7 +282,7 @@ void Reader::read_tags() {
             read_groups();
 
             // adjust unv elements index ordering for each group
-            adjust_elements_ids();
+            adjust_group_elements();
             break;
 
         case TagKind::DOFs:
@@ -237,13 +297,27 @@ void Reader::read_tags() {
 }
 
 void Reader::read_units() {
+    /**
+     * @brief Read system of untis tag 164  .
+     * 
+     * 
+     * @throw std::runtime_error If the stream does not contain a valid unv file.
+     * 
+     */
     std::size_t unit_code = 0;
 
-    _stream.read_line(_temp_line);
+    if (!_stream.read_line(_temp_line)) {
+        throw std::runtime_error(
+            "unvpp::Reader::read_units(): Unexpected end of file while reading units tag");
+    }
+
     _temp_line_view = _temp_line;
     unit_code = read_first_scalar(_temp_line_view);
 
-    _stream.read_line(_temp_line);
+    if (!_stream.read_line(_temp_line)) {
+        throw std::runtime_error("unvpp::Reader::read_units(): Unexpected end of file while "
+                                 "reading units tag length scale");
+    }
     _temp_line_view = _temp_line;
     auto length_scale = read_first_double(_temp_line_view);
 
@@ -260,13 +334,20 @@ void Reader::read_units() {
     skip_tag();
 
     units_system = UnitsSystem {
-        unit_code,
-        length_scale,
-        repr,
+        .code = unit_code,
+        .length_scale = length_scale,
+        .repr = repr,
     };
 }
 
 void Reader::read_vertices() {
+    /**
+     * @brief Read vertices tag 2411.
+     * 
+     * 
+     * @throw std::runtime_error If the stream does not contain a valid unv file.
+     * 
+     */
     std::size_t current_point_id {0};
 
     while (_stream.read_line(_temp_line)) {
@@ -279,9 +360,9 @@ void Reader::read_vertices() {
         auto point_unv_id = read_first_scalar(_temp_line_view);
 
         if (!_stream.read_line(_temp_line)) {
-            std::string error_msg {"Failed to read point coordinates at line "};
-            error_msg += _stream.line_number();
-            throw std::runtime_error(error_msg);
+            throw std::runtime_error(std::string("unvpp::Reader::read_vertices(): ") +
+                                     "Unexpected end of file at line " +
+                                     std::to_string(_stream.line_number()));
         }
 
         _vertices.emplace_back(read_double_triplet(_temp_line_view));
@@ -291,6 +372,13 @@ void Reader::read_vertices() {
 }
 
 void Reader::read_elements() {
+    /**
+     * @brief Read elements tag 2412.
+     * 
+     * 
+     * @throw std::runtime_error If the stream does not contain a valid unv file.
+     * 
+     */
     std::size_t current_element_id {0};
 
     while (_stream.read_line(_temp_line)) {
@@ -306,7 +394,11 @@ void Reader::read_elements() {
         auto element_type = element_type_from_element_id(records[1]);
         auto vertex_count = records[5];
 
-        _stream.read_line(_temp_line);
+        if (!_stream.read_line(_temp_line)) {
+            throw std::runtime_error(std::string("unvpp::Reader::read_elements(): ") +
+                                     "Failed to read element vertices at line " +
+                                     std::to_string(_stream.line_number()));
+        }
 
         if (is_beam_type(element_type)) {
             _stream.read_line(_temp_line);
@@ -321,6 +413,13 @@ void Reader::read_elements() {
 }
 
 void Reader::adjust_vertices_ids() {
+    /**
+     * @brief Adjust vertices ids to match the order in which they were read.
+     * 
+     * 
+     * @throw std::runtime_error If the stream does not contain a valid unv file.
+     * 
+     */
     for (auto& element : _elements) {
         for (auto& v_id : element.vertices_ids()) {
             v_id = _unv_vertex_id_to_ordered_id_map[v_id];
@@ -328,17 +427,30 @@ void Reader::adjust_vertices_ids() {
     }
 }
 
-void Reader::adjust_elements_ids() {
+void Reader::adjust_group_elements() {
+    /**
+     * @brief Adjust group elements ids to match the order in which they were read, 
+     * and add the type of each element to group unique elements set.
+     * 
+     * @throw std::runtime_error If the stream does not contain a valid unv file.
+     * 
+     */
     for (auto& group : _groups) {
         for (auto& e_id : group.elements_ids()) {
             e_id = _unv_element_id_to_ordered_id_map[e_id];
+            group.add_element_type(_elements[e_id].type());
         }
-
-        set_group_unique_elements_types(group);
     }
 }
 
 void Reader::read_groups() {
+    /**
+     * @brief Read groups tag 2452 & 2467.
+     * 
+     * 
+     * @throw std::runtime_error If the stream does not contain a valid unv file.
+     * 
+     */
     // Group number of element is stored at index 7 in group definition
     constexpr std::size_t n_element_pos = 7;
 
@@ -368,6 +480,13 @@ void Reader::read_groups() {
 }
 
 void Reader::read_dofs() {
+    /**
+     * @brief Read dofs tag 757.
+     * 
+     * 
+     * @throw std::runtime_error If the stream does not contain a valid unv file.
+     * 
+     */
     while (_stream.read_line(_temp_line)) {
         _temp_line_view = _temp_line;
 
@@ -400,13 +519,17 @@ void Reader::read_dofs() {
     }
 }
 
-void Reader::set_group_unique_elements_types(Group& group) {
-    for (auto& element_id : group.elements_ids()) {
-        group.add_element_type(_elements[element_id].type());
-    }
-}
-
 auto Reader::read_group_elements(std::size_t n_elements) -> Reader::GroupDataPair {
+    /**
+     * @brief Read group elements.
+     * 
+     * @param n_elements Number of elements in the group.
+     * 
+     * @return A pair containing the group elements ids and the group type.
+     * 
+     * @throw std::runtime_error If the stream does not contain a valid unv file.
+     * 
+     */
     if (n_elements == 1) {
         return read_group_elements_single_column();
     }
@@ -422,6 +545,16 @@ auto Reader::read_group_elements(std::size_t n_elements) -> Reader::GroupDataPai
 }
 
 auto Reader::read_group_elements_two_columns(std::size_t n_elements) -> Reader::GroupDataPair {
+    /**
+     * @brief Read group elements in two columns of records.
+     * 
+     * @param n_elements Number of elements in the group.
+     * 
+     * @return A pair containing the group elements ids and the group type.
+     * 
+     * @throw std::runtime_error If the stream does not contain a valid unv file.
+     * 
+     */
     // Warning: this causes a narrowing conversion from 'std::size_t' to 'double
     auto n_rows = static_cast<std::size_t>(n_elements / 2.0);
     std::vector<size_t> elements;
@@ -446,6 +579,14 @@ auto Reader::read_group_elements_two_columns(std::size_t n_elements) -> Reader::
 }
 
 auto Reader::read_group_elements_single_column() -> Reader::GroupDataPair {
+    /**
+     * @brief Read group elements in a single column of records.
+     * 
+     * @return A pair containing the group elements ids and the group type.
+     * 
+     * @throw std::runtime_error If the stream does not contain a valid unv file.
+     * 
+     */
     if (!_stream.read_line(_temp_line)) {
         throw std::runtime_error("Failed to read group element");
     }

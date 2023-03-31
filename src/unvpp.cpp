@@ -36,7 +36,9 @@ auto is_crlf_and_not_windows(const std::filesystem::path& path) -> bool {
     auto st = std::ifstream {path, std::ios::in | std::ios::binary};
     auto stream = FileStream(st);
     auto line = std::string();
+
     stream.read_line(line);
+
     return line.back() == '\r';
 #endif
 

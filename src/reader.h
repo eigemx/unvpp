@@ -30,7 +30,7 @@ SOFTWARE.
 #include <utility>
 
 
-namespace unv {
+namespace unvpp {
 
 class Reader {
 public:
@@ -91,4 +91,4 @@ private:
     std::unordered_map<std::size_t, std::size_t> _unv_vertex_id_to_ordered_id_map;
     std::unordered_map<std::size_t, std::size_t> _unv_element_id_to_ordered_id_map;
 };
-} // namespace unv
+} // namespace unvpp

@@ -30,7 +30,7 @@ SOFTWARE.
 #include <unordered_set>
 #include <vector>
 
-namespace unv {
+namespace unvpp {
 
 /*
 * UNV system of units, code and repr (representation) can be on of the following:
@@ -154,4 +154,4 @@ struct Mesh {
  */
 auto read(const std::filesystem::path& path) -> Mesh;
 
-} // namespace unv
+} // namespace unvpp

@@ -29,7 +29,7 @@ SOFTWARE.
 #include "reader.h"
 #include "stream.h"
 
-namespace unv {
+namespace unvpp {
 
 auto is_crlf_and_not_windows(const std::filesystem::path& path) -> bool {
 #if !defined(_WIN32) && !defined(_WIN64)
@@ -74,4 +74,4 @@ auto read(const std::filesystem::path& path) -> Mesh {
     return mesh;
 }
 
-} // namespace unv
+} // namespace unvpp

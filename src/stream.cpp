@@ -24,7 +24,7 @@ SOFTWARE.
 
 #include "stream.h"
 
-namespace unv {
+namespace unvpp {
 auto FileStream::read_line(std::string& line) -> bool {
     if (file_stream->good()) {
         std::getline(*file_stream, line);
@@ -38,4 +38,4 @@ FileStream::~FileStream() {
     file_stream->close();
 }
 
-} // namespace unv
+} // namespace unvpp

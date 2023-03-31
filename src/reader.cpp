@@ -28,7 +28,7 @@ SOFTWARE.
 #include <cmath>
 #include <fast_float/fast_float.h>
 
-namespace unv {
+namespace unvpp {
 
 auto inline read_double_triplet(std::string_view line) -> std::array<double, 3> {
     std::array<double, 3> numbers {};
@@ -458,4 +458,4 @@ auto Reader::read_group_elements_single_column() -> Reader::GroupDataPair {
 
     return std::make_pair(element, group_type);
 }
-} // namespace unv
+} // namespace unvpp

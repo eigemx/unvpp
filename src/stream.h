@@ -28,7 +28,7 @@ SOFTWARE.
 #include <string>
 #include <vector>
 
-namespace unv {
+namespace unvpp {
 class FileStream {
 public:
     FileStream(std::ifstream& fstream) : file_stream(&fstream) {}
@@ -49,4 +49,4 @@ private:
     std::ifstream* file_stream {nullptr};
 };
 
-} // namespace unv
+} // namespace unvpp

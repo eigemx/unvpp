@@ -41,20 +41,20 @@ auto main(int argc, char* argv[]) -> int {
 
     // measure time of execution
     auto start = std::chrono::high_resolution_clock::now();
-    auto mesh = unv::read(args[1]);
+    auto mesh = unvpp::read(args[1]);
     auto end = std::chrono::high_resolution_clock::now();
 
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
-    std::cout << "Units system: " << mesh.units_system.value_or(unv::UnitsSystem()).repr
+    std::cout << "Units system: " << mesh.units_system.value_or(unvpp::UnitsSystem()).repr
               << std::endl;
     std::cout << "Vertices count = " << mesh.vertices.size() << std::endl;
-    std::cout << "Elements count = " << mesh.elements.value_or(std::vector<unv::Element>()).size()
+    std::cout << "Elements count = " << mesh.elements.value_or(std::vector<unvpp::Element>()).size()
               << "\n\n";
 
     // count elements of each type
     std::vector<std::size_t> elements_count(6, 0);
-    for (auto& element : mesh.elements.value_or(std::vector<unv::Element>())) {
+    for (auto& element : mesh.elements.value_or(std::vector<unvpp::Element>())) {
         elements_count[static_cast<std::size_t>(element.type())]++;
     }
 
@@ -68,20 +68,20 @@ auto main(int argc, char* argv[]) -> int {
         std::cout << "- Hexahedrons: " << elements_count[5] << '\n' << std::endl;
     }
 
-    for (auto& group : mesh.groups.value_or(std::vector<unv::Group>())) {
+    for (auto& group : mesh.groups.value_or(std::vector<unvpp::Group>())) {
         std::cout << "Group name: " << group.name() << '\n'
                   << " - elements count = " << group.elements_ids().size() << '\n'
                   << " - unique elements types count in group = "
                   << group.unique_element_types().size() << std::endl;
 
         // print the string representation of each element type in the group
-        std::map<unv::ElementType, std::string> element_type_to_string;
-        element_type_to_string.insert({unv::ElementType::Line, "Line"});
-        element_type_to_string.insert({unv::ElementType::Triangle, "Triangle"});
-        element_type_to_string.insert({unv::ElementType::Quad, "Quadrangle"});
-        element_type_to_string.insert({unv::ElementType::Tetra, "Tetrahedron"});
-        element_type_to_string.insert({unv::ElementType::Wedge, "Wedge"});
-        element_type_to_string.insert({unv::ElementType::Hex, "Hexahedron"});
+        std::map<unvpp::ElementType, std::string> element_type_to_string;
+        element_type_to_string.insert({unvpp::ElementType::Line, "Line"});
+        element_type_to_string.insert({unvpp::ElementType::Triangle, "Triangle"});
+        element_type_to_string.insert({unvpp::ElementType::Quad, "Quadrangle"});
+        element_type_to_string.insert({unvpp::ElementType::Tetra, "Tetrahedron"});
+        element_type_to_string.insert({unvpp::ElementType::Wedge, "Wedge"});
+        element_type_to_string.insert({unvpp::ElementType::Hex, "Hexahedron"});
 
         // print the different element types in the group
         for (const auto& element_type : group.unique_element_types()) {

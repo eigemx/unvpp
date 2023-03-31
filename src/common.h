@@ -23,21 +23,17 @@ SOFTWARE.
 */
 #pragma once
 
-#include <algorithm>
 #include <array>
 #include <map>
 #include <stdexcept>
 #include <string>
 #include <string_view>
-#include <vector>
 
 #include <unvpp/unvpp.h>
 
-#include "stream.h"
-
 using std::string_view_literals::operator""sv;
 
-namespace unv {
+namespace unvpp {
 
 const std::array<std::string, 11> unv_units_codes = {
     "Unknown",                // 0
@@ -84,43 +80,12 @@ inline auto tag_kind_from_str(std::string_view tag) -> TagKind {
     };
 
     auto it = tag_kind_map.find(tag);
+
     if (it != tag_kind_map.end()) {
         return it->second;
     }
 
     return TagKind::Unsupported;
-}
-
-inline auto vertices_count_from_element_id(std::size_t unv_element_id) -> std::size_t {
-    switch (unv_element_id) {
-    case 11: // rod
-    case 21: // linear beam
-        return 2;
-    case 22: // tapered beam
-    case 24: // parabolic beam
-    case 41: // plane stress linear triangle
-    case 91: // thin shell linear triangle
-        return 3;
-    case 42: // plane stress parabolic triangle
-    case 92: // thin shell parabolic triangle
-    case 112:
-        return 6;
-    case 44:  // plane stress linear quadrilateral
-    case 94:  // thin shell linear quadrilateral
-    case 122: // rigid element
-    case 111:
-        return 4;
-    case 45:  // plane stress parabolic quadrilateral
-    case 95:  // thin shell parabolic quadrilateral
-    case 115: // solid Linear Brick
-        return 8;
-    case 118: // solid Parabolic Tetrahedron
-        return 10;
-    case 116: // solid Parabolic Brick
-        return 20;
-    default:
-        return 0;
-    }
 }
 
 inline auto element_type_from_element_id(std::size_t unv_element_id) -> ElementType {
@@ -150,8 +115,7 @@ inline auto element_type_from_element_id(std::size_t unv_element_id) -> ElementT
     case 116:
         return ElementType::Hex;
     default:
-        // throw exception for unknown element_type
-        throw std::runtime_error(std::string("unv::element_type_from_element_id(): ") +
+        throw std::runtime_error(std::string("unvpp::element_type_from_element_id(): ") +
                                  "Unknown element type id " + std::to_string(unv_element_id));
     }
 }
@@ -164,4 +128,4 @@ inline auto is_beam_type(ElementType element_type) -> bool {
     return element_type == ElementType::Line;
 }
 
-} // namespace unv
+} // namespace unvpp

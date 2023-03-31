@@ -57,14 +57,14 @@ This will compile unvpp library and unv-report tool in `build\bin` directory. un
 #include <iostream>
 
 auto main() -> int {
-    // read mesh, this will return a unv::Mesh struct:
+    // read mesh, this will return a unvpp::Mesh struct:
     // struct Mesh {
     //      std::optional<UnitsSystem> unitsSystem;
     //      std::vector<Vertex> vertices;
     //      std::optional<std::vector<Element>> elements;
     //      std::optional<std::vector<Group>> groups;
     // };
-    auto mesh = unv::read("./my_mesh.unv");
+    auto mesh = unvpp::read("./my_mesh.unv");
 
 
     // print string representation of the mesh system of units
@@ -72,7 +72,7 @@ auto main() -> int {
     // print the default "repr" representation string "Unknown".
     // Check definition of UnitsSystem in unvpp/unvpp.h file
     std::cout << "Units system: " 
-              << mesh.unitsSystem.value_or(unv::UnitsSystem()).repr
+              << mesh.unitsSystem.value_or(unvpp::UnitsSystem()).repr
               << std::endl;
 
     // print count of mesh vertices
@@ -82,11 +82,11 @@ auto main() -> int {
 
     // print count of mesh elements (cells)
     std::cout << "Elements count = " 
-              << mesh.elements.value_or(std::vector<unv::Element>()).size()
+              << mesh.elements.value_or(std::vector<unvpp::Element>()).size()
               << std::endl;
 
     // print group names and element count (like boundary patches or cell zones)
-    for (auto& group : mesh.groups.value_or(std::vector<unv::Group>())) {
+    for (auto& group : mesh.groups.value_or(std::vector<unvpp::Group>())) {
         std::cout << "Group name: " 
                   << group.name 
                   << " - elements count = " 
@@ -98,7 +98,7 @@ auto main() -> int {
 }
 ```
 
-unvpp is designed to have a minimal interface, you can understand more about the various types included in `unv::Mesh` struct by simply inspecting `<unvpp/unvpp.h>` file!
+unvpp is designed to have a minimal interface, you can understand more about the various types included in `unvpp::Mesh` struct by simply inspecting `<unvpp/unvpp.h>` file!
 
 ## Issues
 unvpp is under active development, please feel free to open an issue for any bugs or wrong behaviour

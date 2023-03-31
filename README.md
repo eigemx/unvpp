@@ -17,6 +17,7 @@ Other tags are ignored.
 # Get Started
 
 ## Using as a CMake dependency
+Having CMake 3.11 or later, you can use FetchContent to add unvpp as a dependency to your project:
 
 ```cmake
 include(FetchContent)
@@ -32,7 +33,8 @@ FetchContent_MakeAvailable(unvpp)
 add_executable(main src/main.cpp)
 target_link_libraries(main PRIVATE unvpp)
 
-```cmake
+```
+It's planned to make a header-only version of unvpp in the future to make it easier to use and avoid the need for FetchContent.
 
 ## Build `unv-report` tool:
 

@@ -22,11 +22,32 @@ Clone the repository:
 git clone https://github.com/eigemx/unvpp.git
 ```
 
-Configure and build:
+### Build unv-report tool:
 
 ```sh
 cd unvpp && mkdir build && cd build && cmake .. && make
 ```
+
+This will compile unvpp library and unv-report tool in `build\bin` directory. unv-report tool is a simple tool for printing mesh information.
+
+### Add unvpp as a dependency to your project using CMake and FetchContent
+
+```cmake
+include(FetchContent)
+
+FetchContent_Declare(
+    unvpp
+    GIT_REPOSITORY https://github.com/eigemx/unvpp.git
+    GIT_TAG main
+)
+
+FetchContent_MakeAvailable(unvpp)
+
+add_executable(main src/main.cpp)
+target_link_libraries(main PRIVATE unvpp)
+
+```cmake
+
 
 ### Tutorial
 ```cpp

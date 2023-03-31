@@ -32,6 +32,12 @@ SOFTWARE.
 namespace unvpp {
 
 auto is_crlf_and_not_windows(const std::filesystem::path& path) -> bool {
+    /**
+     * @brief Check if the input file has Windows line endings and is not a Windows machine.
+     * 
+     * @param path path to the input file
+     * @return true if the input file has Windows line endings and is not a Windows machine
+     */
 #if !defined(_WIN32) && !defined(_WIN64)
     auto st = std::ifstream {path, std::ios::in | std::ios::binary};
     auto stream = FileStream(st);
@@ -46,6 +52,12 @@ auto is_crlf_and_not_windows(const std::filesystem::path& path) -> bool {
 }
 
 auto read(const std::filesystem::path& path) -> Mesh {
+    /**
+     * @brief Read an input UNV mesh file.
+     * 
+     * @param path path to the input UNV mesh file
+     * @return Mesh
+     */
     if (!std::filesystem::exists(path)) {
         throw std::runtime_error("Input UNV mesh file does not exist!");
     }

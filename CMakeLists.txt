@@ -11,6 +11,9 @@ project (
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# set option to build unv-report
+option(UNV_BUILD_UTILITIES "Build utilities" ON)
+
 # set default build type to release if not specified
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release")
@@ -34,12 +37,13 @@ if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 endif()
 
 
-# turn off assertions in release build
-if (CMAKE_BUILD_TYPE STREQUAL "Release")
+# turn off assertions in release build or if unvpp is not the main project
+if (NOT UNVPP_MAIN_PROJECT OR CMAKE_BUILD_TYPE STREQUAL "Release")
     add_compile_definitions(NDEBUG)
 endif()
 
 
+# add fast_float library
 FetchContent_Declare(
   fast_float
   GIT_REPOSITORY https://github.com/lemire/fast_float.git
@@ -57,5 +61,8 @@ if (${UNVPP_MAIN_PROJECT})
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
-    add_subdirectory(utilities)
+    if (UNV_BUILD_UTILITIES)
+        add_subdirectory(utilities)
+    endif()
+
 endif()

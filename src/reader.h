@@ -40,14 +40,22 @@ public:
     Reader(Reader&& other) = delete;
     auto operator=(Reader& other) -> Reader& = delete;
     auto operator=(Reader&& other) -> Reader& = delete;
-    ~Reader() { _stream.~FileStream(); }
+    ~Reader() = default;
 
     void read_tags();
 
-    auto units() -> UnitsSystem&;
-    auto vertices() -> std::vector<std::array<double, 3>>&;
-    auto elements() -> std::vector<Element>&;
-    auto groups() -> std::vector<Group>&;
+    auto inline units() const noexcept -> const UnitsSystem& { return units_system; }
+
+    auto inline vertices() const noexcept -> const std::vector<std::array<double, 3>>& {
+        return _vertices;
+    }
+    auto inline vertices() noexcept -> std::vector<std::array<double, 3>>& { return _vertices; }
+
+    auto inline elements() const noexcept -> const std::vector<Element>& { return _elements; }
+    auto inline elements() noexcept -> std::vector<Element>& { return _elements; }
+
+    auto inline groups() const noexcept -> const std::vector<Group>& { return _groups; }
+    auto inline groups() noexcept -> std::vector<Group>& { return _groups; }
 
 private:
     inline void skip_tag() {
@@ -64,16 +72,14 @@ private:
     void adjust_elements_ids();
     void set_group_unique_elements_types(Group& group);
 
-    template <typename T = std::pair<std::vector<std::size_t>, GroupType>>
-    auto read_group_elements(std::size_t n_elements) -> T;
+    using GroupDataPair = std::pair<std::vector<std::size_t>, GroupType>;
 
-    template <typename T = std::pair<std::vector<std::size_t>, GroupType>>
-    auto read_group_elements_two_columns(std::size_t n_elements) -> T;
-
-    template <typename T = std::pair<std::vector<std::size_t>, GroupType>>
-    auto read_group_elements_single_column() -> T;
+    auto read_group_elements(std::size_t n_elements) -> GroupDataPair;
+    auto read_group_elements_two_columns(std::size_t n_elements) -> GroupDataPair;
+    auto read_group_elements_single_column() -> GroupDataPair;
 
     FileStream& _stream;
+
     std::string _temp_line;
     std::string_view _temp_line_view;
 

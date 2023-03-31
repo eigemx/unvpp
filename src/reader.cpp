@@ -409,23 +409,7 @@ void Reader::set_group_unique_elements_types(Group& group) {
     }
 }
 
-auto Reader::units() -> UnitsSystem& {
-    return units_system;
-}
-
-auto Reader::vertices() -> std::vector<std::array<double, 3>>& {
-    return _vertices;
-}
-
-auto Reader::elements() -> std::vector<Element>& {
-    return _elements;
-}
-
-auto Reader::groups() -> std::vector<Group>& {
-    return _groups;
-}
-
-template <typename T> auto Reader::read_group_elements(std::size_t n_elements) -> T {
+auto Reader::read_group_elements(std::size_t n_elements) -> Reader::GroupDataPair {
     if (n_elements == 1) {
         return read_group_elements_single_column();
     }
@@ -440,7 +424,7 @@ template <typename T> auto Reader::read_group_elements(std::size_t n_elements) -
     return std::make_pair(elements, group_type);
 }
 
-template <typename T> auto Reader::read_group_elements_two_columns(std::size_t n_elements) -> T {
+auto Reader::read_group_elements_two_columns(std::size_t n_elements) -> Reader::GroupDataPair {
     // Warning: this causes a narrowing conversion from 'std::size_t' to 'double
     auto n_rows = static_cast<std::size_t>(n_elements / 2.0);
     std::vector<size_t> elements;
@@ -464,7 +448,7 @@ template <typename T> auto Reader::read_group_elements_two_columns(std::size_t n
     return std::make_pair(elements, group_type);
 }
 
-template <typename T> auto Reader::read_group_elements_single_column() -> T {
+auto Reader::read_group_elements_single_column() -> Reader::GroupDataPair {
     if (!_stream.read_line(_temp_line)) {
         throw std::runtime_error("Failed to read group element");
     }

@@ -35,7 +35,6 @@ SOFTWARE.
 
 #include "stream.h"
 
-
 using std::string_view_literals::operator""sv;
 
 namespace unv {
@@ -66,7 +65,6 @@ constexpr std::array<std::string_view, 2> GROUP_TAGS {"  2452"sv, "  2467"sv};
 constexpr auto POINT_GROUP {"7"sv};
 constexpr auto ELEMENT_GROUP {"8"sv};
 
-
 enum class TagKind {
     Separator,
     Units,
@@ -76,7 +74,6 @@ enum class TagKind {
     Group,
     Unsupported,
 };
-
 
 inline auto tag_kind_from_str(std::string_view tag) -> TagKind {
     static const std::map<std::string_view, TagKind> tag_kind_map = {
@@ -93,7 +90,6 @@ inline auto tag_kind_from_str(std::string_view tag) -> TagKind {
 
     return TagKind::Unsupported;
 }
-
 
 inline auto vertices_count_from_element_id(std::size_t unv_element_id) -> std::size_t {
     switch (unv_element_id) {
@@ -126,7 +122,6 @@ inline auto vertices_count_from_element_id(std::size_t unv_element_id) -> std::s
         return 0;
     }
 }
-
 
 inline auto element_type_from_element_id(std::size_t unv_element_id) -> ElementType {
     switch (unv_element_id) {

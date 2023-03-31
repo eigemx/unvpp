@@ -26,7 +26,6 @@ SOFTWARE.
 
 #include <fstream>
 #include <string>
-#include <vector>
 
 namespace unvpp {
 class FileStream {

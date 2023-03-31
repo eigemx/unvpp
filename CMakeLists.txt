@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # set option to build unv-report
-option(UNV_BUILD_UTILITIES "Build utilities" ON)
+option(UNV_BUILD_UTILITIES "build-utilities" ON)
 
 # set default build type to release if not specified
 if (NOT CMAKE_BUILD_TYPE)

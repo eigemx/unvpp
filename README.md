@@ -14,23 +14,9 @@ unvpp is designed as a parser for input UNV meshes for finite volume analysis. u
 
 Other tags are ignored.
 
-## Get Started
+# Get Started
 
-Clone the repository:
-
-```sh
-git clone https://github.com/eigemx/unvpp.git
-```
-
-### Build unv-report tool:
-
-```sh
-cd unvpp && mkdir build && cd build && cmake .. && make
-```
-
-This will compile unvpp library and unv-report tool in `build\bin` directory. unv-report tool is a simple tool for printing mesh information.
-
-### Add unvpp as a dependency to your project using CMake and FetchContent
+## Using as a CMake dependency
 
 ```cmake
 include(FetchContent)
@@ -47,6 +33,20 @@ add_executable(main src/main.cpp)
 target_link_libraries(main PRIVATE unvpp)
 
 ```cmake
+
+## Build `unv-report` tool:
+
+Clone the repository:
+
+```sh
+git clone https://github.com/eigemx/unvpp.git
+```
+
+```sh
+cd unvpp && mkdir build && cd build && cmake .. && make
+```
+
+This will compile unvpp library and unv-report tool in `build\bin` directory. unv-report tool is a simple tool for printing mesh information.
 
 
 ### Tutorial

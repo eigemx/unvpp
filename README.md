@@ -51,7 +51,7 @@ cd unvpp && mkdir build && cd build && cmake .. && make
 This will compile unvpp library and unv-report tool in `build\bin` directory. unv-report tool is a simple tool for printing mesh information.
 
 
-### Tutorial
+## Tutorial
 ```cpp
 #include <unvpp/unvpp.h>
 #include <iostream>

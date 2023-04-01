@@ -1,5 +1,3 @@
-enable_testing()
-
 add_executable(
   test_reader
   test_reader_basics.cpp

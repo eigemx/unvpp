@@ -73,6 +73,8 @@ if (${UNVPP_MAIN_PROJECT})
 
     if (UNV_BUILD_UTILITIES)
         add_subdirectory(utilities)
+
+        enable_testing()
         add_subdirectory(tests)
     endif()
 

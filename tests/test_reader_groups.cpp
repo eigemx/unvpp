@@ -3,7 +3,7 @@
 #include <unvpp/unvpp.h>
 
 TEST(ReaderGroupsTest, GroupsNames) {
-    auto path = std::filesystem::path("tests/meshes/eight_hex_cube_with_groups.unv");
+    auto path = std::filesystem::path("../../tests/meshes/eight_hex_cube_with_groups.unv");
     auto mesh = unvpp::read(path);
 
     EXPECT_EQ(mesh.vertices.size(), 27);

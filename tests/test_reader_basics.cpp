@@ -3,7 +3,7 @@
 #include <unvpp/unvpp.h>
 
 TEST(ReaderOneCellTest, BasicAssertions) {
-    auto path = std::filesystem::path("tests/meshes/one_hex_cell.unv");
+    auto path = std::filesystem::path("../../tests/meshes/one_hex_cell.unv");
     auto mesh = unvpp::read(path);
 
     EXPECT_EQ(mesh.units_system.has_value(), true);

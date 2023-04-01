@@ -17,7 +17,7 @@ auto count_element_types(const unvpp::Mesh& mesh) -> std::map<unvpp::ElementType
 }
 
 TEST(ReaderElementsTest, ElementsCount) {
-    auto path = std::filesystem::path("tests/meshes/cylinderWithGroupsCoarse.unv");
+    auto path = std::filesystem::path("../../tests/meshes/cylinderWithGroupsCoarse.unv");
     auto mesh = unvpp::read(path);
 
     EXPECT_EQ(mesh.vertices.size(), 5207);

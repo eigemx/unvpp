@@ -1,9 +1,13 @@
+#include <filesystem>
 #include <gtest/gtest.h>
 #include <unvpp/unvpp.h>
 
-TEST(ReaderTest, BasicAssertions) {
+TEST(ReaderOneCellTest, BasicAssertions) {
     auto path = std::filesystem::path("tests/meshes/one_hex_cell.unv");
     auto mesh = unvpp::read(path);
+
+    EXPECT_EQ(mesh.units_system.has_value(), true);
+    EXPECT_EQ(mesh.units_system.value().code, 1);
 
     EXPECT_EQ(mesh.vertices.size(), 8);
     EXPECT_EQ(mesh.elements.has_value(), true);

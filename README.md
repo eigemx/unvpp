@@ -34,7 +34,6 @@ add_executable(main src/main.cpp)
 target_link_libraries(main PRIVATE unvpp)
 
 ```
-It's planned to make a header-only version of unvpp in the future to make it easier to use and avoid the need for FetchContent.
 
 ## Build `unv-report` tool:
 

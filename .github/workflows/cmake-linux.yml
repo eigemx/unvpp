@@ -31,8 +31,8 @@ jobs:
     
     - name: Test
       run: |
-        cd ${{github.workspace}}/build
-        ctest -C ${{env.BUILD_TYPE}}
+        cd build
+        ctest -C ${{env.BUILD_TYPE}} -VV
     #- name: Test
       #working-directory: ${{github.workspace}}/build
       # Execute tests defined by the CMake configuration.  

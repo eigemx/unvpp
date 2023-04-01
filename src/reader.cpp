@@ -334,9 +334,9 @@ void Reader::read_units() {
     skip_tag();
 
     units_system = UnitsSystem {
-        .code = unit_code,
-        .length_scale = length_scale,
-        .repr = repr,
+        unit_code,
+        length_scale,
+        repr,
     };
 }
 

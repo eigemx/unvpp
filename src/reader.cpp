@@ -256,7 +256,8 @@ void Reader::read_tags() {
      * 
      */
     while (_stream.read_line(_temp_line)) {
-        _temp_line_view = _temp_line;
+        _temp_line_view = std::string_view(_temp_line.data(), _temp_line.size());
+        ;
 
         if (is_separator(_temp_line_view)) {
             continue;
@@ -311,14 +312,16 @@ void Reader::read_units() {
             "unvpp::Reader::read_units(): Unexpected end of file while reading units tag");
     }
 
-    _temp_line_view = _temp_line;
+    _temp_line_view = std::string_view(_temp_line.data(), _temp_line.size());
+    ;
     unit_code = read_first_scalar(_temp_line_view);
 
     if (!_stream.read_line(_temp_line)) {
         throw std::runtime_error("unvpp::Reader::read_units(): Unexpected end of file while "
                                  "reading units tag length scale");
     }
-    _temp_line_view = _temp_line;
+    _temp_line_view = std::string_view(_temp_line.data(), _temp_line.size());
+    ;
     auto length_scale = read_first_double(_temp_line_view);
 
     // Unit tag also include force scale, temperature scale and temperature
@@ -351,7 +354,7 @@ void Reader::read_vertices() {
     std::size_t current_point_id {0};
 
     while (_stream.read_line(_temp_line)) {
-        _temp_line_view = _temp_line;
+        _temp_line_view = std::string_view(_temp_line.data(), _temp_line.size());
 
         if (is_separator(_temp_line_view)) {
             break;
@@ -364,6 +367,8 @@ void Reader::read_vertices() {
                                      "Unexpected end of file at line " +
                                      std::to_string(_stream.line_number()));
         }
+
+        _temp_line_view = std::string_view(_temp_line.data(), _temp_line.size());
 
         _vertices.emplace_back(read_double_triplet(_temp_line_view));
 
@@ -382,7 +387,8 @@ void Reader::read_elements() {
     std::size_t current_element_id {0};
 
     while (_stream.read_line(_temp_line)) {
-        _temp_line_view = _temp_line;
+        _temp_line_view = std::string_view(_temp_line.data(), _temp_line.size());
+        ;
 
         if (is_separator(_temp_line_view)) {
             break;
@@ -404,7 +410,8 @@ void Reader::read_elements() {
             _stream.read_line(_temp_line);
         }
 
-        _temp_line_view = _temp_line;
+        _temp_line_view = std::string_view(_temp_line.data(), _temp_line.size());
+        ;
         auto vertices_ids = read_n_scalars(_temp_line_view, vertex_count);
         _elements.emplace_back(std::move(vertices_ids), element_type);
 
@@ -455,7 +462,8 @@ void Reader::read_groups() {
     constexpr std::size_t n_element_pos = 7;
 
     while (_stream.read_line(_temp_line)) {
-        _temp_line_view = _temp_line;
+        _temp_line_view = std::string_view(_temp_line.data(), _temp_line.size());
+        ;
         if (is_separator(_temp_line_view)) {
             break;
         }
@@ -488,7 +496,8 @@ void Reader::read_dofs() {
      * 
      */
     while (_stream.read_line(_temp_line)) {
-        _temp_line_view = _temp_line;
+        _temp_line_view = std::string_view(_temp_line.data(), _temp_line.size());
+        ;
 
         if (is_separator(_temp_line_view)) {
             break;
@@ -566,7 +575,8 @@ auto Reader::read_group_elements_two_columns(std::size_t n_elements) -> Reader::
         if (!_stream.read_line(_temp_line)) {
             throw std::runtime_error("Failed to read group element");
         }
-        _temp_line_view = _temp_line;
+        _temp_line_view = std::string_view(_temp_line.data(), _temp_line.size());
+        ;
 
         auto records = read_n_scalars(_temp_line_view, 6);
         elements.push_back(records[1]);
@@ -591,7 +601,8 @@ auto Reader::read_group_elements_single_column() -> Reader::GroupDataPair {
         throw std::runtime_error("Failed to read group element");
     }
 
-    _temp_line_view = _temp_line;
+    _temp_line_view = std::string_view(_temp_line.data(), _temp_line.size());
+    ;
 
     auto records = read_n_scalars(_temp_line, 2);
     auto element = std::vector<std::size_t>({records[1]});

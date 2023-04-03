@@ -28,17 +28,8 @@ jobs:
     - name: Build
       # Build your program with the given configuration
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
-<<<<<<< HEAD
-
-    - name: Test
-      run: |
-        cd ${{github.workspace}}/build
-        ctest -C ${{env.BUILD_TYPE}}
-      #working-directory: ${{github.workspace}}/build
-=======
     
     #- name: Test
->>>>>>> 2f7d27f4843bf3bef00e1b0c7011b0ad52c41f11
       # Execute tests defined by the CMake configuration.  
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       #run: |

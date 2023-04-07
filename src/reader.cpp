@@ -602,7 +602,6 @@ auto Reader::read_group_elements_single_column() -> Reader::GroupDataPair {
     }
 
     _temp_line_view = std::string_view(_temp_line.data(), _temp_line.size());
-    ;
 
     auto records = read_n_integers(_temp_line, 2);
     auto element = std::vector<std::size_t>({records[1]});

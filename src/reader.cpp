@@ -83,9 +83,9 @@ auto inline read_double_triplet(std::string_view line) -> std::array<double, 3> 
     return numbers;
 }
 
-auto inline read_n_scalars(std::string_view line, std::size_t n) -> std::vector<std::size_t> {
+auto inline read_n_integers(std::string_view line, std::size_t n) -> std::vector<std::size_t> {
     /**
-     * @brief Read n scalar values from a line.
+     * @brief Read n integer values from a line.
      * 
      * 
      * @param line The line to read from.
@@ -137,7 +137,7 @@ auto inline read_n_scalars(std::string_view line, std::size_t n) -> std::vector<
     return numbers;
 }
 
-auto inline read_first_scalar(std::string_view line) -> std::size_t {
+auto inline read_first_number(std::string_view line) -> std::size_t {
     /**
      * @brief Read the first scalar value from a line.
      * 
@@ -150,7 +150,7 @@ auto inline read_first_scalar(std::string_view line) -> std::size_t {
      */
     auto start = line.find_first_not_of(' ');
     if (start == std::string_view::npos) {
-        throw std::runtime_error("read_first_scalar(): No number found in line");
+        throw std::runtime_error("read_first_number(): No number found in line");
     }
 
     auto pos = start;
@@ -162,7 +162,7 @@ auto inline read_first_scalar(std::string_view line) -> std::size_t {
         return number;
     }
 
-    throw std::runtime_error("read_first_scalar(): Error parsing number");
+    throw std::runtime_error("read_first_number(): Error parsing number");
 }
 
 auto inline read_first_double(std::string_view line) -> double {
@@ -193,7 +193,7 @@ auto inline read_first_double(std::string_view line) -> double {
     throw std::runtime_error("read_first_double(): Error parsing number");
 }
 
-auto inline read_nth_scalar(std::string_view line, std::size_t n) -> std::size_t {
+auto inline read_nth_integer(std::string_view line, std::size_t n) -> std::size_t {
     /**
      * @brief Read the nth scalar value from a line.
      * 
@@ -209,7 +209,7 @@ auto inline read_nth_scalar(std::string_view line, std::size_t n) -> std::size_t
     auto start = line.find_first_not_of(' ');
 
     if (start == std::string_view::npos) {
-        throw std::runtime_error("read_nth_scalar(): No number found in line");
+        throw std::runtime_error("read_nth_integer(): No number found in line");
     }
 
     auto pos = start;
@@ -218,12 +218,12 @@ auto inline read_nth_scalar(std::string_view line, std::size_t n) -> std::size_t
         auto end = line.find(' ', pos);
 
         if (end == std::string_view::npos) {
-            throw std::runtime_error("read_nth_scalar(): Not enough numbers in line");
+            throw std::runtime_error("read_nth_integer(): Not enough numbers in line");
         }
 
         pos = line.find_first_not_of(' ', end);
         if (pos == std::string_view::npos) {
-            throw std::runtime_error("read_nth_scalar(): Not enough numbers in line");
+            throw std::runtime_error("read_nth_integer(): Not enough numbers in line");
         }
     }
 
@@ -243,7 +243,7 @@ auto inline read_nth_scalar(std::string_view line, std::size_t n) -> std::size_t
         return number;
     }
 
-    throw std::runtime_error("read_nth_scalar(): Error parsing number");
+    throw std::runtime_error("read_nth_integer(): Error parsing number");
 }
 
 
@@ -314,7 +314,7 @@ void Reader::read_units() {
 
     _temp_line_view = std::string_view(_temp_line.data(), _temp_line.size());
     ;
-    unit_code = read_first_scalar(_temp_line_view);
+    unit_code = read_first_number(_temp_line_view);
 
     if (!_stream.read_line(_temp_line)) {
         throw std::runtime_error("unvpp::Reader::read_units(): Unexpected end of file while "
@@ -360,7 +360,7 @@ void Reader::read_vertices() {
             break;
         }
 
-        auto point_unv_id = read_first_scalar(_temp_line_view);
+        auto point_unv_id = read_first_number(_temp_line_view);
 
         if (!_stream.read_line(_temp_line)) {
             throw std::runtime_error(std::string("unvpp::Reader::read_vertices(): ") +
@@ -394,7 +394,7 @@ void Reader::read_elements() {
             break;
         }
 
-        auto records = read_n_scalars(_temp_line_view, 6);
+        auto records = read_n_integers(_temp_line_view, 6);
 
         auto element_unv_id = records[0];
         auto element_type = element_type_from_element_id(records[1]);
@@ -412,7 +412,7 @@ void Reader::read_elements() {
 
         _temp_line_view = std::string_view(_temp_line.data(), _temp_line.size());
         ;
-        auto vertices_ids = read_n_scalars(_temp_line_view, vertex_count);
+        auto vertices_ids = read_n_integers(_temp_line_view, vertex_count);
         _elements.emplace_back(std::move(vertices_ids), element_type);
 
         _unv_element_id_to_ordered_id_map[element_unv_id] = current_element_id++;
@@ -468,7 +468,7 @@ void Reader::read_groups() {
             break;
         }
 
-        auto n_elements = read_nth_scalar(_temp_line_view, n_element_pos);
+        auto n_elements = read_nth_integer(_temp_line_view, n_element_pos);
 
         // get group name
         if (!_stream.read_line(_temp_line)) {
@@ -521,7 +521,7 @@ void Reader::read_dofs() {
                 break;
             }
             group_vertices.push_back(
-                _unv_vertex_id_to_ordered_id_map[read_first_scalar(_temp_line)]);
+                _unv_vertex_id_to_ordered_id_map[read_first_number(_temp_line)]);
         }
 
         _groups.emplace_back(std::move(group_name), GroupType::Vertex, std::move(group_vertices));
@@ -578,7 +578,7 @@ auto Reader::read_group_elements_two_columns(std::size_t n_elements) -> Reader::
         _temp_line_view = std::string_view(_temp_line.data(), _temp_line.size());
         ;
 
-        auto records = read_n_scalars(_temp_line_view, 6);
+        auto records = read_n_integers(_temp_line_view, 6);
         elements.push_back(records[1]);
         elements.push_back(records[5]);
 
@@ -604,7 +604,7 @@ auto Reader::read_group_elements_single_column() -> Reader::GroupDataPair {
     _temp_line_view = std::string_view(_temp_line.data(), _temp_line.size());
     ;
 
-    auto records = read_n_scalars(_temp_line, 2);
+    auto records = read_n_integers(_temp_line, 2);
     auto element = std::vector<std::size_t>({records[1]});
     auto group_type = records[0] == 8 ? GroupType::Element : GroupType::Vertex;
 

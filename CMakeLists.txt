@@ -12,7 +12,15 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # set option to build unv-report
-option(UNV_BUILD_UTILITIES "build-utilities" ON)
+option(UNV_BUILD_UTILITIES "build-utilities" OFF)
+if (NOT UNV_BUILD_UTILITIES)
+    message(STATUS "unv-report will not be built. To build unv-report, set UNV_BUILD_UTILITIES to ON.")
+endif()
+
+option(UNV_BUILD_TESTS "build-tests" OFF)
+if (NOT UNV_BUILD_TESTS)
+    message(STATUS "tests will not be built. To build tests, set UNV_BUILD_TESTS to ON.")
+endif()
 
 # set default build type to release if not specified
 if (NOT CMAKE_BUILD_TYPE)
@@ -52,16 +60,6 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(fast_float)
 
-FetchContent_Declare(
-  googletest
-  URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
-)
-
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-
-FetchContent_MakeAvailable(googletest)
-
 add_subdirectory(src)
 
 if (${UNVPP_MAIN_PROJECT})
@@ -75,7 +73,19 @@ if (${UNVPP_MAIN_PROJECT})
         add_subdirectory(utilities)
     endif()
 
-    enable_testing()
-    add_subdirectory(tests)
+    if (UNV_BUILD_TESTS)
+        FetchContent_Declare(
+            googletest
+            URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+        )
+        
+        # For Windows: Prevent overriding the parent project's compiler/linker settings
+        set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+        
+        FetchContent_MakeAvailable(googletest)
+
+        enable_testing()
+        add_subdirectory(tests)
+    endif()
 
 endif()

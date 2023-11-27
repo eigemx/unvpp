@@ -79,9 +79,9 @@ auto main() -> int {
     // print group names and element count (like boundary patches or cell zones)
     for (auto& group : mesh.groups().value_or(std::vector<unvpp::Group>())) {
         std::cout << "Group name: " 
-                  << group.name 
+                  << group.name() 
                   << " - elements count = " 
-                  << group.eIndices.size()
+                  << group.elements_ids().size()
                   << std::endl;
     }
 
@@ -89,7 +89,7 @@ auto main() -> int {
 }
 ```
 
-unvpp is designed to have a minimal interface, you can understand more about the various types included in `unvpp::Mesh` struct by simply inspecting `<unvpp/unvpp.h>` file!
+unvpp is designed to have a minimal interface, you can understand more about the various types included in `unvpp::Mesh` class by simply inspecting `<unvpp/unvpp.h>` file!
 
 ## Issues
 unvpp is under active development, please feel free to open an issue for any bugs or wrong behaviour

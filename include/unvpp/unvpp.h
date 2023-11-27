@@ -144,7 +144,11 @@ class Mesh {
     Mesh(std::vector<std::array<double, 3>> vertices,
          std::optional<std::vector<Element>> elements,
          std::optional<std::vector<Group>> groups,
-         std::optional<UnitsSystem> units_system);
+         std::optional<UnitsSystem> unit_system)
+        : _vertices(std::move(vertices)),
+          _elements(std::move(elements)),
+          _groups(std::move(groups)),
+          _unit_system(std::move(unit_system)) {}
 
     auto vertices() const -> const std::vector<std::array<double, 3>>& { return _vertices; }
     auto elements() const -> const std::optional<std::vector<Element>>& { return _elements; }

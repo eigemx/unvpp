@@ -75,8 +75,8 @@ struct Element {
      * @param v a vector of vertices ids defining the element
      * @param type type of the element
      */
-    Element(std::vector<std::size_t> v, ElementType type) noexcept
-        : _vertices_ids(std::move(v)), _type(type) {}
+    Element(std::vector<std::size_t> vertices_ids, ElementType type) noexcept
+        : _vertices_ids(std::move(vertices_ids)), _type(type) {}
 
     auto inline vertices_ids() noexcept -> std::vector<std::size_t>& { return _vertices_ids; }
     auto inline vertices_ids() const noexcept -> const std::vector<std::size_t>& {
@@ -84,7 +84,7 @@ struct Element {
     }
     auto inline type() const noexcept -> ElementType { return _type; }
 
-private:
+  private:
     std::vector<std::size_t> _vertices_ids;
     ElementType _type;
 };
@@ -123,7 +123,7 @@ struct Group {
     void inline add_element_type(ElementType type) { _unique_element_types.insert(type); }
 
 
-private:
+  private:
     std::string _name;
     GroupType _type;
     std::vector<std::size_t> _elements_ids;
@@ -131,7 +131,7 @@ private:
 };
 
 /* UNV mesh data */
-struct Mesh {
+class Mesh {
     /**
      * @brief UNV mesh object
      * 
@@ -140,11 +140,24 @@ struct Mesh {
      * @param elements an optional vector of elements (if any)
      * @param groups an optional vector of groups (if any)
      */
-    std::optional<UnitsSystem> units_system {std::nullopt};
-    std::vector<std::array<double, 3>> vertices;
-    std::optional<std::vector<Element>> elements {std::nullopt};
-    std::optional<std::vector<Group>> groups {std::nullopt};
+  public:
+    Mesh(std::vector<std::array<double, 3>> vertices,
+         std::optional<std::vector<Element>> elements,
+         std::optional<std::vector<Group>> groups,
+         std::optional<UnitsSystem> units_system);
+
+    auto vertices() const -> const std::vector<std::array<double, 3>>& { return _vertices; }
+    auto elements() const -> const std::optional<std::vector<Element>>& { return _elements; }
+    auto groups() const -> const std::optional<std::vector<Group>>& { return _groups; }
+    auto unit_system() const -> const std::optional<UnitsSystem>& { return _unit_system; }
+
+  private:
+    std::vector<std::array<double, 3>> _vertices;
+    std::optional<std::vector<Element>> _elements {std::nullopt};
+    std::optional<std::vector<Group>> _groups {std::nullopt};
+    std::optional<UnitsSystem> _unit_system {std::nullopt};
 };
+
 
 /**
  * @brief Read UNV mesh from file

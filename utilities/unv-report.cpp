@@ -21,13 +21,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#include <unvpp/unvpp.h>
+
 #include <chrono>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <map>
-
-#include <unvpp/unvpp.h>
 
 auto main(int argc, char* argv[]) -> int {
     // convert argv to vector of strings
@@ -46,19 +46,19 @@ auto main(int argc, char* argv[]) -> int {
 
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
-    std::cout << "Units system: " << mesh.units_system.value_or(unvpp::UnitsSystem()).repr
+    std::cout << "Units system: " << mesh.unit_system().value_or(unvpp::UnitsSystem()).repr
               << std::endl;
-    std::cout << "Vertices count = " << mesh.vertices.size() << std::endl;
-    std::cout << "Elements count = " << mesh.elements.value_or(std::vector<unvpp::Element>()).size()
-              << "\n\n";
+    std::cout << "Vertices count = " << mesh.vertices().size() << std::endl;
+    std::cout << "Elements count = "
+              << mesh.elements().value_or(std::vector<unvpp::Element>()).size() << "\n\n";
 
     // count elements of each type
     std::vector<std::size_t> elements_count(6, 0);
-    for (auto& element : mesh.elements.value_or(std::vector<unvpp::Element>())) {
+    for (auto& element : mesh.elements().value_or(std::vector<unvpp::Element>())) {
         elements_count[static_cast<std::size_t>(element.type())]++;
     }
 
-    if (mesh.elements.has_value()) {
+    if (mesh.elements().has_value()) {
         std::cout << "Elements types count:" << std::endl;
         std::cout << "- Lines: " << elements_count[0] << std::endl;
         std::cout << "- Triangles: " << elements_count[1] << std::endl;
@@ -68,7 +68,7 @@ auto main(int argc, char* argv[]) -> int {
         std::cout << "- Hexahedrons: " << elements_count[5] << '\n' << std::endl;
     }
 
-    for (auto& group : mesh.groups.value_or(std::vector<unvpp::Group>())) {
+    for (auto& group : mesh.groups().value_or(std::vector<unvpp::Group>())) {
         std::cout << "Group name: " << group.name() << '\n'
                   << " - elements count = " << group.elements_ids().size() << '\n'
                   << " - unique elements types count in group = "

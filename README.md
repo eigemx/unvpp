@@ -71,21 +71,21 @@ auto main() -> int {
     // print the default "repr" representation string "Unknown".
     // Check definition of UnitsSystem in unvpp/unvpp.h file
     std::cout << "Units system: " 
-              << mesh.unitsSystem.value_or(unvpp::UnitsSystem()).repr
+              << mesh.unit_system().value_or(unvpp::UnitsSystem()).repr
               << std::endl;
 
     // print count of mesh vertices
     std::cout << "Vertices count = " 
-              << mesh.vertices.size() 
+              << mesh.vertices().size() 
               << std::endl;
 
     // print count of mesh elements (cells)
     std::cout << "Elements count = " 
-              << mesh.elements.value_or(std::vector<unvpp::Element>()).size()
+              << mesh.elements().value_or(std::vector<unvpp::Element>()).size()
               << std::endl;
 
     // print group names and element count (like boundary patches or cell zones)
-    for (auto& group : mesh.groups.value_or(std::vector<unvpp::Group>())) {
+    for (auto& group : mesh.groups().value_or(std::vector<unvpp::Group>())) {
         std::cout << "Group name: " 
                   << group.name 
                   << " - elements count = " 

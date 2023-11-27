@@ -56,15 +56,7 @@ This will compile unvpp library and unv-report tool in `build\bin` directory. un
 #include <iostream>
 
 auto main() -> int {
-    // read mesh, this will return a unvpp::Mesh struct:
-    // struct Mesh {
-    //      std::optional<UnitsSystem> unitsSystem;
-    //      std::vector<Vertex> vertices;
-    //      std::optional<std::vector<Element>> elements;
-    //      std::optional<std::vector<Group>> groups;
-    // };
-    auto mesh = unvpp::read("./my_mesh.unv");
-
+    unvpp::Mesh mesh = unvpp::read("./my_mesh.unv");
 
     // print string representation of the mesh system of units
     // if the mesh does not have a system of units, 

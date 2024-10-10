@@ -23,62 +23,60 @@ SOFTWARE.
 */
 #include <unvpp/unvpp.h>
 
-#include <iostream>
 #include <stdexcept>
 
-#include "common.h"
 #include "reader.h"
 #include "stream.h"
 
 namespace unvpp {
 
-auto is_crlf_and_not_windows(const std::filesystem::path& path) -> bool {
-    /**
-     * @brief Check if the input file has Windows line endings and is not a Windows machine.
-     * 
-     * @param path path to the input file
-     * @return true if the input file has Windows line endings and is not a Windows machine
-     */
+auto is_crlf_and_not_windows(const std::filesystem::path &path) -> bool {
+  /**
+   * @brief Check if the input file has Windows line endings and is not a
+   * Windows machine.
+   *
+   * @param path path to the input file
+   * @return true if the input file has Windows line endings and is not a
+   * Windows machine
+   */
 #if !defined(_WIN32) && !defined(_WIN64)
-    auto st = std::ifstream {path, std::ios::in | std::ios::binary};
-    auto stream = FileStream(st);
-    auto line = std::string();
+  auto stream = FileStream(path);
+  auto line = std::string();
 
-    stream.read_line(line);
+  stream.read_line(line);
 
-    return line.back() == '\r';
+  return line.back() == '\r';
 #endif
 
-    return false;
+  return false;
 }
 
-auto read(const std::filesystem::path& path) -> Mesh {
-    /**
-     * @brief Read an input UNV mesh file.
-     * 
-     * @param path path to the input UNV mesh file
-     * @return Mesh
-     */
-    if (!std::filesystem::exists(path)) {
-        throw std::runtime_error("Input UNV mesh file does not exist!");
-    }
+auto read(const std::filesystem::path &path) -> Mesh {
+  /**
+   * @brief Read an input UNV mesh file.
+   *
+   * @param path path to the input UNV mesh file
+   * @return Mesh
+   */
+  if (!std::filesystem::exists(path)) {
+    throw std::runtime_error("Input UNV mesh file does not exist!");
+  }
 
-    // check if input is not a file
-    if (!std::filesystem::is_regular_file(path)) {
-        throw std::runtime_error("Input UNV mesh file is not a regular file!");
-    }
+  // check if input is not a file
+  if (!std::filesystem::is_regular_file(path)) {
+    throw std::runtime_error("Input UNV mesh file is not a regular file!");
+  }
 
-    if (is_crlf_and_not_windows(path)) {
-        throw std::runtime_error(
-            "Input UNV mesh file has Windows line endings, please convert to UNIX line endings.");
-    }
+  if (is_crlf_and_not_windows(path)) {
+    throw std::runtime_error("Input UNV mesh file has Windows line endings, "
+                             "please convert to UNIX line endings.");
+  }
 
-    auto st = std::ifstream(path);
-    auto stream = FileStream(st);
-    auto reader = Reader(stream);
-    reader.read_tags();
+  auto reader = Reader(path);
+  reader.read_tags();
 
-    return Mesh {reader.vertices(), reader.elements(), reader.groups(), reader.units()};
+  return Mesh{reader.vertices(), reader.elements(), reader.groups(),
+              reader.units()};
 }
 
 } // namespace unvpp

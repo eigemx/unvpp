@@ -8,7 +8,7 @@ TEST(ReaderOneCellTest, BasicAssertions) {
     auto mesh = unvpp::read(path);
 
     EXPECT_EQ(mesh.unit_system().has_value(), true);
-    EXPECT_EQ(mesh.unit_system().value().code, 1);
+    EXPECT_EQ(mesh.unit_system().value().code(), 1);
 
     EXPECT_EQ(mesh.vertices().size(), 8);
     EXPECT_EQ(mesh.elements().has_value(), true);

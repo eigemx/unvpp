@@ -26,11 +26,12 @@ SOFTWARE.
 
 #include <fstream>
 #include <string>
+#include <filesystem>
 
 namespace unvpp {
 class FileStream {
 public:
-    FileStream(std::ifstream& fstream) : file_stream(&fstream) {}
+    FileStream(const std::filesystem::path& path);
     auto inline line_number() const -> std::size_t { return _line_number; }
 
     FileStream() = delete;
@@ -45,7 +46,7 @@ public:
 
 private:
     std::size_t _line_number {0};
-    std::ifstream* file_stream {nullptr};
+    std::ifstream _file_stream;
 };
 
 } // namespace unvpp

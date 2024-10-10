@@ -28,11 +28,11 @@ if (CMAKE_BUILD_TYPE STREQUAL "Release")
 endif()
 
 # check if unvpp is compiled as the main project
-set(UNVPP_MAIN_PROJECT OFF)
 if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     set(UNVPP_MAIN_PROJECT ON)
+else()
+    set(UNVPP_MAIN_PROJECT OFF)
 endif()
-
 
 # turn off assertions in release build or if unvpp is not the main project
 if (NOT UNVPP_MAIN_PROJECT OR CMAKE_BUILD_TYPE STREQUAL "Release")

@@ -1,4 +1,8 @@
 add_library(unvpp
+    units.cpp
+    element.cpp
+    group.cpp
+    mesh.cpp
     reader.cpp
     stream.cpp
     unvpp.cpp

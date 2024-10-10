@@ -60,10 +60,10 @@ auto main() -> int {
 
     // print string representation of the mesh system of units
     // if the mesh does not have a system of units, 
-    // print the default "repr" representation string "Unknown".
+    // print the default representation string "Unknown".
     // Check definition of UnitsSystem in unvpp/unvpp.h file
     std::cout << "Units system: " 
-              << mesh.unit_system().value_or(unvpp::UnitsSystem()).repr
+              << mesh.unit_system().value_or(unvpp::UnitsSystem()).repr()
               << std::endl;
 
     // print count of mesh vertices

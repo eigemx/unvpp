@@ -24,7 +24,6 @@ SOFTWARE.
 #include <unvpp/unvpp.h>
 
 #include <chrono>
-#include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <map>
@@ -72,21 +71,22 @@ auto main(int argc, char *argv[]) -> int {
     std::cout << "- Hexahedrons: " << elements_count[5] << '\n' << std::endl;
   }
 
+  // collect the string representation of each element type in the group
+  std::map<unvpp::ElementType, std::string> element_type_to_string;
+  element_type_to_string.insert({unvpp::ElementType::Line, "Line"});
+  element_type_to_string.insert({unvpp::ElementType::Triangle, "Triangle"});
+  element_type_to_string.insert({unvpp::ElementType::Quad, "Quadrangle"});
+  element_type_to_string.insert({unvpp::ElementType::Tetra, "Tetrahedron"});
+  element_type_to_string.insert({unvpp::ElementType::Wedge, "Wedge"});
+  element_type_to_string.insert({unvpp::ElementType::Hex, "Hexahedron"});
+
   for (auto &group : mesh.groups().value_or(std::vector<unvpp::Group>())) {
     std::cout << "Group name: " << group.name() << '\n'
               << " - elements count = " << group.elements_ids().size() << '\n'
               << " - unique elements types count in group = "
               << group.unique_element_types().size() << std::endl;
 
-    // print the string representation of each element type in the group
-    std::map<unvpp::ElementType, std::string> element_type_to_string;
-    element_type_to_string.insert({unvpp::ElementType::Line, "Line"});
-    element_type_to_string.insert({unvpp::ElementType::Triangle, "Triangle"});
-    element_type_to_string.insert({unvpp::ElementType::Quad, "Quadrangle"});
-    element_type_to_string.insert({unvpp::ElementType::Tetra, "Tetrahedron"});
-    element_type_to_string.insert({unvpp::ElementType::Wedge, "Wedge"});
-    element_type_to_string.insert({unvpp::ElementType::Hex, "Hexahedron"});
-
+    std::cout << " - unique elements:" << std::endl;
     // print the different element types in the group
     for (const auto &element_type : group.unique_element_types()) {
       std::cout << "   * " << element_type_to_string[element_type] << std::endl;

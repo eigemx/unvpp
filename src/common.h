@@ -55,7 +55,11 @@ constexpr auto UNITS_TAG{"   164"sv};
 constexpr auto VERTICES_TAG{"  2411"sv};
 constexpr auto ELEMENTS_TAG{"  2412"sv};
 constexpr auto DOFS_TAG{"   757"sv};
-constexpr std::array<std::string_view, 2> GROUP_TAGS{"  2452"sv, "  2467"sv};
+
+constexpr std::array<std::string_view, 3> GROUP_TAGS{
+    "  2452"sv, "  2467"sv,
+    // gmsh exports physical groups using 2477 tag
+    "  2477"sv};
 
 // group types
 constexpr auto POINT_GROUP{"7"sv};
@@ -76,7 +80,7 @@ inline auto tag_kind_from_str(std::string_view tag) -> TagKind {
       {SEPARATOR, TagKind::Separator},   {UNITS_TAG, TagKind::Units},
       {ELEMENTS_TAG, TagKind::Elements}, {VERTICES_TAG, TagKind::Vertices},
       {DOFS_TAG, TagKind::DOFs},         {GROUP_TAGS[0], TagKind::Group},
-      {GROUP_TAGS[1], TagKind::Group},
+      {GROUP_TAGS[1], TagKind::Group},   {GROUP_TAGS[2], TagKind::Group},
   };
 
   auto iter = tag_kind_map.find(tag);

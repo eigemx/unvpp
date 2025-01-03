@@ -34,12 +34,6 @@ else()
     set(UNVPP_MAIN_PROJECT OFF)
 endif()
 
-# turn off assertions in release build or if unvpp is not the main project
-if (NOT UNVPP_MAIN_PROJECT OR CMAKE_BUILD_TYPE STREQUAL "Release")
-    add_compile_definitions(NDEBUG)
-endif()
-
-
 # add fast_float library
 FetchContent_Declare(
   fast_float

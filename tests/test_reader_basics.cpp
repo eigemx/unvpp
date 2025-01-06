@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <unvpp/unvpp.h>
-
+#include <algorithm>
 #include <filesystem>
 
 TEST(ReaderOneCellTest, BasicAssertions) {

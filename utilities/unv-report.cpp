@@ -47,7 +47,7 @@ auto main(int argc, char *argv[]) -> int {
       std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
   std::cout << "Units system: "
-            << mesh.unit_system().value_or(unvpp::UnitsSystem()).repr()
+            << mesh.unit_system().value_or(unvpp::UnitsSystem()).to_string()
             << std::endl;
   std::cout << "Vertices count = " << mesh.vertices().size() << std::endl;
   std::cout << "Elements count = "

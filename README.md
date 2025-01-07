@@ -58,31 +58,30 @@ This will compile unvpp library and unv-report tool in `build\bin` directory. un
 auto main() -> int {
     unvpp::Mesh mesh = unvpp::read("./my_mesh.unv");
 
-    // print string representation of the mesh system of units
-    // if the mesh does not have a system of units, 
-    // print the default representation string "Unknown".
-    // Check definition of UnitsSystem in unvpp/unvpp.h file
-    std::cout << "Units system: " 
-              << mesh.unit_system().value_or(unvpp::UnitsSystem()).repr()
-              << std::endl;
+    if (mesh.unit_system().has_value()) {
+        std::cout << "Units system: " 
+                  << mesh.unit_system().value().to_string()
+                  << std::endl;
+    }
 
-    // print count of mesh vertices
     std::cout << "Vertices count = " 
               << mesh.vertices().size() 
               << std::endl;
 
-    // print count of mesh elements (cells)
-    std::cout << "Elements count = " 
-              << mesh.elements().value_or(std::vector<unvpp::Element>()).size()
-              << std::endl;
-
-    // print group names and element count (like boundary patches or cell zones)
-    for (auto& group : mesh.groups().value_or(std::vector<unvpp::Group>())) {
-        std::cout << "Group name: " 
-                  << group.name() 
-                  << " - elements count = " 
-                  << group.elements_ids().size()
+    if (mesh.elements().has_value()) {
+        std::cout << "Elements count = " 
+                  << mesh.elements().value().size()
                   << std::endl;
+    }
+
+    if (mesh.groups().has_value()) {
+        for (const auto& group : mesh.groups().value()) {
+            std::cout << "Group name: " 
+                      << group.name() 
+                      << " - elements count = " 
+                      << group.elements_ids().size()
+                      << std::endl;
+        }
     }
 
     return 0;

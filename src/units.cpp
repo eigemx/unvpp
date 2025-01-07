@@ -16,6 +16,6 @@ auto UnitsSystem::length_scale() const noexcept -> double {
   return _length_scale;
 }
 
-auto UnitsSystem::repr() const noexcept -> std::string { return _repr; }
+auto UnitsSystem::to_string() const noexcept -> std::string { return _repr; }
 
 } // namespace unvpp

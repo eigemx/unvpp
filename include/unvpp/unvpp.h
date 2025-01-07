@@ -61,7 +61,7 @@ public:
 
   auto code() const noexcept -> std::size_t;
   auto length_scale() const noexcept -> double;
-  auto repr() const noexcept -> std::string;
+  auto to_string() const noexcept -> std::string;
 
 private:
   std::size_t _code{0};

@@ -25,9 +25,9 @@ SOFTWARE.
 
 #include "common.h"
 #include "stream.h"
+#include <filesystem>
 #include <unordered_map>
 #include <utility>
-#include <filesystem>
 
 namespace unvpp {
 
@@ -42,30 +42,13 @@ public:
   ~Reader() = default;
 
   void read_tags();
-
-  auto inline units() const noexcept -> const UnitsSystem & {
-    return units_system;
-  }
-
-  auto inline vertices() const noexcept
-      -> const std::vector<std::array<double, 3>> & {
-    return _vertices;
-  }
-  auto inline vertices() noexcept -> std::vector<std::array<double, 3>> & {
-    return _vertices;
-  }
-
-  auto inline elements() const noexcept -> const std::vector<Element> & {
-    return _elements;
-  }
-  auto inline elements() noexcept -> std::vector<Element> & {
-    return _elements;
-  }
-
-  auto inline groups() const noexcept -> const std::vector<Group> & {
-    return _groups;
-  }
-  auto inline groups() noexcept -> std::vector<Group> & { return _groups; }
+  auto units() const noexcept -> const UnitsSystem &;
+  auto vertices() const noexcept -> const std::vector<std::array<double, 3>> &;
+  auto vertices() noexcept -> std::vector<std::array<double, 3>> &;
+  auto elements() const noexcept -> const std::vector<Element> &;
+  auto elements() noexcept -> std::vector<Element> &;
+  auto groups() const noexcept -> const std::vector<Group> &;
+  auto groups() noexcept -> std::vector<Group> &;
 
 private:
   inline void skip_tag() {

@@ -261,6 +261,77 @@ auto inline read_nth_integer(std::string_view line,
   throw std::runtime_error("read_nth_integer(): Error parsing number");
 }
 
+auto Reader::units() const noexcept -> const UnitsSystem & {
+  /**
+   * @brief Get the units system.
+   *
+   * @return The units system.
+   *
+   */
+  return units_system;
+}
+
+auto Reader::vertices() const noexcept
+    -> const std::vector<std::array<double, 3>> & {
+  /**
+   * @brief Get the vertices array.
+   *
+   * @return The vertices array.
+   *
+   */
+  return _vertices;
+}
+
+auto Reader::vertices() noexcept -> std::vector<std::array<double, 3>> & {
+  /**
+   * @brief Get the vertices array.
+   *
+   * @return The vertices array.
+   *
+   */
+  return _vertices;
+}
+
+auto Reader::elements() const noexcept -> const std::vector<Element> & {
+  /**
+   * @brief Get the elements array.
+   *
+   * @return The elements array.
+   *
+   */
+  return _elements;
+}
+
+auto Reader::elements() noexcept -> std::vector<Element> & {
+  /**
+   * @brief Get the elements array.
+   *
+   * @return The elements array.
+   *
+   */
+  return _elements;
+}
+
+auto Reader::groups() const noexcept -> const std::vector<Group> & {
+  /**
+   * @brief Get the groups array.
+   *
+   * @return The groups array.
+   *
+   */
+  return _groups;
+}
+
+auto Reader::groups() noexcept -> std::vector<Group> & {
+  /**
+   * @brief Get the groups array.
+   *
+   * @return The groups array.
+   *
+   */
+  return _groups;
+}
+
 Reader::Reader(const std::filesystem::path &path) : _stream(path) {}
 
 void Reader::read_tags() {

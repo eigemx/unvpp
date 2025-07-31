@@ -40,17 +40,17 @@ struct UnitsSystem {
    *
    *   Representation              Code
    *   -------------------------   ----
-   *   "Unknown",                // 0
-   *   "SI: Meter (newton)",     // 1
-   *   "BG: Foot (pound f)",     // 2
-   *   "MG: Meter (kilogram f)", // 3
-   *   "BA: Foot (poundal)",     // 4
-   *   "MM: mm (milli newton)",  // 5
-   *   "CM: cm (centi newton)",  // 6
-   *   "IN: Inch (pound f)",     // 7
-   *   "GM: mm (kilogram f)",    // 8
-   *   "US: USER_DEFINED",       // 9
-   *   "MN: mm (newton)",        // 10
+   *   "Unknown",                  0
+   *   "SI: Meter (newton)",       1
+   *   "BG: Foot (pound f)",       2
+   *   "MG: Meter (kilogram f)",   3
+   *   "BA: Foot (poundal)",       4
+   *   "MM: mm (milli newton)",    5
+   *   "CM: cm (centi newton)",    6
+   *   "IN: Inch (pound f)",       7
+   *   "GM: mm (kilogram f)",      8
+   *   "US: USER_DEFINED",         9
+   *   "MN: mm (newton)",          10
    *
    *   @param code The code of the system of units, as given in above table.
    *   @param length_scale The factor to scale length units (vertices).

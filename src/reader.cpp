@@ -23,7 +23,7 @@ SOFTWARE.
 */
 
 #include "reader.h"
-
+#include "common.h"
 #include <charconv>
 #include <cmath>
 #include <fast_float/fast_float.h>
@@ -86,8 +86,8 @@ auto inline read_double_triplet(std::string_view line)
   return numbers;
 }
 
-auto inline read_n_integers(std::string_view line,
-                            std::size_t n) -> std::vector<std::size_t> {
+auto inline read_n_integers(std::string_view line, std::size_t n)
+    -> std::vector<std::size_t> {
   /**
    * @brief Read n integer values from a line.
    *
@@ -203,8 +203,8 @@ auto inline read_first_double(std::string_view line) -> double {
   throw std::runtime_error("read_first_double(): Error parsing number");
 }
 
-auto inline read_nth_integer(std::string_view line,
-                             std::size_t n) -> std::size_t {
+auto inline read_nth_integer(std::string_view line, std::size_t n)
+    -> std::size_t {
   /**
    * @brief Read the nth scalar value from a line.
    *
@@ -699,4 +699,10 @@ auto Reader::read_group_elements_single_column() -> Reader::GroupDataPair {
 
   return std::make_pair(element, group_type);
 }
+
+void Reader::skip_tag() {
+  while (_stream.read_line(_temp_line) && !is_separator(_temp_line)) {
+  }
+}
+
 } // namespace unvpp

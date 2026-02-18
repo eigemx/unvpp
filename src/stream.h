@@ -24,29 +24,29 @@ SOFTWARE.
 
 #pragma once
 
+#include <filesystem>
 #include <fstream>
 #include <string>
-#include <filesystem>
 
 namespace unvpp {
 class FileStream {
 public:
-    FileStream(const std::filesystem::path& path);
-    auto inline line_number() const -> std::size_t { return _line_number; }
+  FileStream(const std::filesystem::path &path);
+  auto line_number() const -> std::size_t { return _line_number; }
 
-    FileStream() = delete;
-    FileStream(FileStream& other) = delete;
-    FileStream(FileStream&& other) = delete;
-    auto operator=(FileStream& other) -> FileStream& = delete;
-    auto operator=(FileStream&& other) -> FileStream& = delete;
+  FileStream() = delete;
+  FileStream(FileStream &other) = delete;
+  FileStream(FileStream &&other) = delete;
+  auto operator=(FileStream &other) -> FileStream & = delete;
+  auto operator=(FileStream &&other) -> FileStream & = delete;
 
-    ~FileStream();
+  ~FileStream();
 
-    auto read_line(std::string& line) -> bool;
+  auto read_line(std::string &line) -> bool;
 
 private:
-    std::size_t _line_number {0};
-    std::ifstream _file_stream;
+  std::size_t _line_number{0};
+  std::ifstream _file_stream;
 };
 
 } // namespace unvpp

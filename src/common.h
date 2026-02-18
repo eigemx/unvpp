@@ -65,7 +65,7 @@ constexpr std::array<std::string_view, 3> GROUP_TAGS{
 constexpr auto POINT_GROUP{"7"sv};
 constexpr auto ELEMENT_GROUP{"8"sv};
 
-enum class TagKind {
+enum class TagKind : std::uint8_t {
   Separator,
   Units,
   Vertices,
@@ -92,8 +92,8 @@ inline auto tag_kind_from_str(std::string_view tag) -> TagKind {
   return TagKind::Unsupported;
 }
 
-inline auto
-element_type_from_element_id(std::size_t unv_element_id) -> ElementType {
+inline auto element_type_from_element_id(std::size_t unv_element_id)
+    -> ElementType {
   switch (unv_element_id) {
   case 11:
   case 21:

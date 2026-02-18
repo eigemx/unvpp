@@ -23,8 +23,8 @@ SOFTWARE.
 */
 #pragma once
 
-#include "common.h"
 #include "stream.h"
+#include "unvpp/unvpp.h"
 #include <filesystem>
 #include <unordered_map>
 #include <utility>
@@ -51,10 +51,7 @@ public:
   auto groups() noexcept -> std::vector<Group> &;
 
 private:
-  inline void skip_tag() {
-    while (_stream.read_line(_temp_line) && !is_separator(_temp_line)) {
-    }
-  }
+  void skip_tag();
 
   void read_units();
   void read_vertices();

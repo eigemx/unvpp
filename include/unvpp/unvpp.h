@@ -24,6 +24,7 @@ SOFTWARE.
 #pragma once
 
 #include <array>
+#include <cstdint>
 #include <filesystem>
 #include <optional>
 #include <string>
@@ -70,7 +71,7 @@ private:
 };
 
 /* Type of UNV elements */
-enum class ElementType {
+enum class ElementType : std::uint8_t {
   Line,
   Triangle,
   Quad,
@@ -104,7 +105,7 @@ private:
  * zones) each group can be either a vertex group or an element (line, face,
  * cell) group.
  */
-enum class GroupType {
+enum class GroupType : std::uint8_t {
   Vertex,
   Element,
 };

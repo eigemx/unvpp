@@ -62,6 +62,7 @@ auto inline read_double_triplet(std::string_view line)
                                             line.data() + line.size(), number);
       if (ec == std::errc()) {
         numbers[count] = number;
+        ++count;
       }
       break;
     }
@@ -81,6 +82,10 @@ auto inline read_double_triplet(std::string_view line)
     }
 
     ++count;
+  }
+
+  if (count < 3) {
+    throw std::runtime_error("read_double_triplet(): Less than 3 numbers found in line");
   }
 
   return numbers;
@@ -120,6 +125,7 @@ auto inline read_n_integers(std::string_view line, std::size_t n)
           std::from_chars(line.data() + pos, line.data() + line.size(), number);
       if (ec == std::errc()) {
         numbers.push_back(number);
+        ++count;
       }
       break;
     }
@@ -139,6 +145,10 @@ auto inline read_n_integers(std::string_view line, std::size_t n)
     }
 
     ++count;
+  }
+
+  if (numbers.size() < n) {
+    throw std::runtime_error("read_n_integers(): Less than n numbers found in line");
   }
 
   return numbers;
@@ -439,24 +449,24 @@ void Reader::read_vertices() {
    */
   std::size_t current_point_id{0};
 
-  while (_stream.read_line(_temp_line)) {
-    _temp_line_view = std::string_view(_temp_line.data(), _temp_line.size());
+  std::string line;
+  while (_stream.read_line(line)) {
+    std::string_view line_view(line);
 
-    if (is_separator(_temp_line_view)) {
+    if (is_separator(line_view)) {
       break;
     }
 
-    auto point_unv_id = read_first_number(_temp_line_view);
+    auto point_unv_id = read_first_number(line_view);
 
-    if (!_stream.read_line(_temp_line)) {
+    if (!_stream.read_line(line)) {
       throw std::runtime_error(std::string("unvpp::Reader::read_vertices(): ") +
-                               "Unexpected end of file at line " +
-                               std::to_string(_stream.line_number()));
+                                "Unexpected end of file at line " +
+                                std::to_string(_stream.line_number()));
     }
 
-    _temp_line_view = std::string_view(_temp_line.data(), _temp_line.size());
-
-    _vertices.emplace_back(read_double_triplet(_temp_line_view));
+    line_view = std::string_view(line);
+    _vertices.emplace_back(read_double_triplet(line_view));
 
     _unv_vertex_id_to_ordered_id_map[point_unv_id] = current_point_id++;
   }
@@ -472,33 +482,32 @@ void Reader::read_elements() {
    */
   std::size_t current_element_id{0};
 
-  while (_stream.read_line(_temp_line)) {
-    _temp_line_view = std::string_view(_temp_line.data(), _temp_line.size());
-    ;
+  std::string line;
+  while (_stream.read_line(line)) {
+    std::string_view line_view(line);
 
-    if (is_separator(_temp_line_view)) {
+    if (is_separator(line_view)) {
       break;
     }
 
-    auto records = read_n_integers(_temp_line_view, 6);
+    auto records = read_n_integers(line_view, 6);
 
     auto element_unv_id = records[0];
     auto element_type = element_type_from_element_id(records[1]);
     auto vertex_count = records[5];
 
-    if (!_stream.read_line(_temp_line)) {
+    if (!_stream.read_line(line)) {
       throw std::runtime_error(std::string("unvpp::Reader::read_elements(): ") +
-                               "Failed to read element vertices at line " +
-                               std::to_string(_stream.line_number()));
+                                "Failed to read element vertices at line " +
+                                std::to_string(_stream.line_number()));
     }
 
     if (is_beam_type(element_type)) {
-      _stream.read_line(_temp_line);
+      _stream.read_line(line);
     }
 
-    _temp_line_view = std::string_view(_temp_line.data(), _temp_line.size());
-    ;
-    auto vertices_ids = read_n_integers(_temp_line_view, vertex_count);
+    line_view = std::string_view(line);
+    auto vertices_ids = read_n_integers(line_view, vertex_count);
     _elements.emplace_back(std::move(vertices_ids), element_type);
 
     _unv_element_id_to_ordered_id_map[element_unv_id] = current_element_id++;
@@ -544,28 +553,26 @@ void Reader::read_groups() {
    * @throw std::runtime_error If the stream does not contain a valid unv file.
    *
    */
-  // Group number of element is stored at index 7 in group definition
   constexpr std::size_t n_element_pos = 7;
 
-  while (_stream.read_line(_temp_line)) {
-    _temp_line_view = std::string_view(_temp_line.data(), _temp_line.size());
-    ;
-    if (is_separator(_temp_line_view)) {
+  std::string line;
+  while (_stream.read_line(line)) {
+    std::string_view line_view(line);
+
+    if (is_separator(line_view)) {
       break;
     }
 
-    auto n_elements = read_nth_integer(_temp_line_view, n_element_pos);
+    auto n_elements = read_nth_integer(line_view, n_element_pos);
 
-    // get group name
-    if (!_stream.read_line(_temp_line)) {
+    if (!_stream.read_line(line)) {
       throw std::runtime_error("Failed to read group name");
     }
 
-    // read group name
-    auto group_name_start = _temp_line.find_first_not_of(' ');
-    auto group_name_end = _temp_line.find_last_not_of(' ');
-    auto group_name = _temp_line.substr(group_name_start,
-                                        group_name_end - group_name_start + 1);
+    auto group_name_start = line.find_first_not_of(' ');
+    auto group_name_end = line.find_last_not_of(' ');
+    auto group_name = line.substr(group_name_start,
+                                   group_name_end - group_name_start + 1);
 
     auto [group_elements, group_type] = read_group_elements(n_elements);
 
@@ -582,33 +589,31 @@ void Reader::read_dofs() {
    * @throw std::runtime_error If the stream does not contain a valid unv file.
    *
    */
-  while (_stream.read_line(_temp_line)) {
-    _temp_line_view = std::string_view(_temp_line.data(), _temp_line.size());
-    ;
+  std::string line;
+  while (_stream.read_line(line)) {
+    std::string_view line_view(line);
 
-    if (is_separator(_temp_line_view)) {
+    if (is_separator(line_view)) {
       break;
     }
 
-    // get patch name
-    if (!_stream.read_line(_temp_line)) {
+    if (!_stream.read_line(line)) {
       throw std::runtime_error("Failed to read group name in DOFs tag");
     }
 
-    // read group name
-    auto group_name_start = _temp_line.find_first_not_of(' ');
-    auto group_name_end = _temp_line.find_last_not_of(' ');
-    auto group_name = _temp_line.substr(group_name_start,
-                                        group_name_end - group_name_start + 1);
+    auto group_name_start = line.find_first_not_of(' ');
+    auto group_name_end = line.find_last_not_of(' ');
+    auto group_name = line.substr(group_name_start,
+                                   group_name_end - group_name_start + 1);
 
     std::vector<std::size_t> group_vertices;
 
-    while (_stream.read_line(_temp_line)) {
-      if (is_separator(_temp_line)) {
+    while (_stream.read_line(line)) {
+      if (is_separator(line)) {
         break;
       }
       group_vertices.push_back(
-          _unv_vertex_id_to_ordered_id_map[read_first_number(_temp_line)]);
+          _unv_vertex_id_to_ordered_id_map[read_first_number(line)]);
     }
 
     _groups.emplace_back(std::move(group_name), GroupType::Vertex,
@@ -654,21 +659,20 @@ auto Reader::read_group_elements_two_columns(std::size_t n_elements)
    * @throw std::runtime_error If the stream does not contain a valid unv file.
    *
    */
-  // Warning: this causes a narrowing conversion from 'std::size_t' to 'double
-  auto n_rows = static_cast<std::size_t>(n_elements / 2.0);
+  auto n_rows = n_elements / 2;
   std::vector<size_t> elements;
   elements.reserve(n_elements);
 
   auto group_type = GroupType::Element;
 
+  std::string line;
   for (std::size_t i = 0; i < n_rows; ++i) {
-    if (!_stream.read_line(_temp_line)) {
+    if (!_stream.read_line(line)) {
       throw std::runtime_error("Failed to read group element");
     }
-    _temp_line_view = std::string_view(_temp_line.data(), _temp_line.size());
-    ;
+    std::string_view line_view(line);
 
-    auto records = read_n_integers(_temp_line_view, 6);
+    auto records = read_n_integers(line_view, 6);
     elements.push_back(records[1]);
     elements.push_back(records[5]);
 
@@ -691,9 +695,9 @@ auto Reader::read_group_elements_single_column() -> Reader::GroupDataPair {
     throw std::runtime_error("Failed to read group element");
   }
 
-  _temp_line_view = std::string_view(_temp_line.data(), _temp_line.size());
+  _temp_line_view = std::string_view(_temp_line);
 
-  auto records = read_n_integers(_temp_line, 2);
+  auto records = read_n_integers(_temp_line_view, 2);
   auto element = std::vector<std::size_t>({records[1]});
   auto group_type = records[0] == 8 ? GroupType::Element : GroupType::Vertex;
 

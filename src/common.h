@@ -24,10 +24,10 @@ SOFTWARE.
 #pragma once
 
 #include <array>
-#include <map>
 #include <stdexcept>
 #include <string>
 #include <string_view>
+#include <unordered_map>
 
 #include <unvpp/unvpp.h>
 
@@ -76,11 +76,15 @@ enum class TagKind : std::uint8_t {
 };
 
 inline auto tag_kind_from_str(std::string_view tag) -> TagKind {
-  static const std::map<std::string_view, TagKind> tag_kind_map = {
-      {SEPARATOR, TagKind::Separator},   {UNITS_TAG, TagKind::Units},
-      {ELEMENTS_TAG, TagKind::Elements}, {VERTICES_TAG, TagKind::Vertices},
-      {DOFS_TAG, TagKind::DOFs},         {GROUP_TAGS[0], TagKind::Group},
-      {GROUP_TAGS[1], TagKind::Group},   {GROUP_TAGS[2], TagKind::Group},
+  static const std::unordered_map<std::string_view, TagKind> tag_kind_map = {
+      {SEPARATOR, TagKind::Separator},
+      {UNITS_TAG, TagKind::Units},
+      {ELEMENTS_TAG, TagKind::Elements},
+      {VERTICES_TAG, TagKind::Vertices},
+      {DOFS_TAG, TagKind::DOFs},
+      {GROUP_TAGS[0], TagKind::Group},
+      {GROUP_TAGS[1], TagKind::Group},
+      {GROUP_TAGS[2], TagKind::Group},
   };
 
   auto iter = tag_kind_map.find(tag);
